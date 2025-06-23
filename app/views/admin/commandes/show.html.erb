@@ -1,0 +1,366 @@
+<div class="admin-page-header">
+  <h1 class="admin-page-title">Commande #<%= @commande.id %></h1>
+  <div class="page-actions">
+    <%= link_to edit_admin_commande_path(@commande), class: "admin-btn" do %>
+      ✏️ Modifier
+    <% end %>
+    <%= link_to admin_commandes_path, class: "admin-btn" do %>
+      ← Retour aux commandes
+    <% end %>
+  </div>
+</div>
+
+<div class="commande-detail-container">
+  <!-- Statut et actions rapides -->
+  <div class="status-section">
+    <div class="current-status">
+      <h3>Statut actuel</h3>
+      <span class="status-badge status-<%= @commande.statut %>">
+        <%= @commande.statut.humanize %>
+      </span>
+    </div>
+
+    <div class="status-actions">
+      <h3>Actions rapides</h3>
+      <div class="action-buttons">
+        <% if @commande.statut == 'en_attente' %>
+          <%= link_to change_status_admin_commande_path(@commande, status: 'confirmee'), 
+                     method: :patch, class: "admin-btn admin-btn-success", 
+                     confirm: "Confirmer cette commande ?" do %>
+            ✅ Confirmer la commande
+          <% end %>
+        <% elsif @commande.statut == 'confirmee' %>
+          <%= link_to change_status_admin_commande_path(@commande, status: 'prete'), 
+                     method: :patch, class: "admin-btn admin-btn-success",
+                     confirm: "Marquer cette commande comme prête ?" do %>
+            🍽️ Marquer prête
+          <% end %>
+        <% elsif @commande.statut == 'prete' %>
+          <%= link_to change_status_admin_commande_path(@commande, status: 'recuperee'), 
+                     method: :patch, class: "admin-btn admin-btn-success",
+                     confirm: "Marquer cette commande comme récupérée ?" do %>
+            ✨ Marquer récupérée
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Informations client -->
+  <div class="client-section">
+    <h3>Informations client</h3>
+    <div class="client-details">
+      <div class="client-field">
+        <label>Nom complet</label>
+        <span><%= @commande.client_nom %></span>
+      </div>
+      
+      <div class="client-field">
+        <label>Téléphone</label>
+        <span><%= @commande.client_telephone %></span>
+      </div>
+      
+      <div class="client-field">
+        <label>Email</label>
+        <span><%= @commande.client_email %></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Détails de la commande -->
+  <div class="order-section">
+    <h3>Détails de la commande</h3>
+    <div class="order-info">
+      <div class="order-field">
+        <label>Date de commande</label>
+        <span><%= @commande.created_at.strftime('%d/%m/%Y à %H:%M') %></span>
+      </div>
+      
+      <div class="order-field">
+        <label>Heure de retrait souhaitée</label>
+        <span><%= @commande.formatted_pickup_time %></span>
+      </div>
+      
+      <% if @commande.notes.present? %>
+        <div class="order-field full-width">
+          <label>Notes particulières</label>
+          <span class="notes-content"><%= @commande.notes %></span>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Articles commandés -->
+  <div class="items-section">
+    <h3>Articles commandés</h3>
+    <div class="items-table">
+      <div class="table-header">
+        <span>Plat</span>
+        <span>Prix unitaire</span>
+        <span>Quantité</span>
+        <span>Sous-total</span>
+      </div>
+      
+      <% @order_items.each do |item| %>
+        <div class="table-row">
+          <span class="item-name">
+            <%= item.plat.nom %>
+            <small class="item-category"><%= item.plat.category.name %></small>
+          </span>
+          <span class="item-unit-price"><%= item.prix_unitaire.to_f %>€</span>
+          <span class="item-quantity"><%= item.quantite %></span>
+          <span class="item-total"><%= item.total_price.to_f %>€</span>
+        </div>
+      <% end %>
+      
+      <div class="table-footer">
+        <span class="total-label">Total de la commande</span>
+        <span class="total-amount"><%= @commande.montant_total.to_f %>€</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Historique -->
+  <div class="history-section">
+    <h3>Informations supplémentaires</h3>
+    <div class="history-info">
+      <div class="history-item">
+        <label>Commande créée</label>
+        <span><%= @commande.created_at.strftime('%d/%m/%Y à %H:%M:%S') %></span>
+      </div>
+      
+      <div class="history-item">
+        <label>Dernière modification</label>
+        <span><%= @commande.updated_at.strftime('%d/%m/%Y à %H:%M:%S') %></span>
+      </div>
+      
+      <div class="history-item">
+        <label>Nombre total d'articles</label>
+        <span><%= @commande.total_items %></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .commande-detail-container {
+    display: grid;
+    gap: 30px;
+  }
+
+  .page-actions {
+    display: flex;
+    gap: 10px;
+  }
+
+  .status-section,
+  .client-section,
+  .order-section,
+  .items-section,
+  .history-section {
+    background: white;
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  .status-section {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 30px;
+    align-items: start;
+  }
+
+  .status-section h3,
+  .client-section h3,
+  .order-section h3,
+  .items-section h3,
+  .history-section h3 {
+    margin: 0 0 20px 0;
+    color: #2c3e50;
+    font-size: 18px;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 10px;
+  }
+
+  .status-badge {
+    display: inline-block;
+    padding: 8px 20px;
+    border-radius: 25px;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .status-en_attente {
+    background: #fff3cd;
+    color: #856404;
+  }
+
+  .status-confirmee {
+    background: #cce5ff;
+    color: #0066cc;
+  }
+
+  .status-prete {
+    background: #d4edda;
+    color: #155724;
+  }
+
+  .status-recuperee {
+    background: #e2e3e5;
+    color: #6c757d;
+  }
+
+  .action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .client-details,
+  .order-info,
+  .history-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+  }
+
+  .client-field,
+  .order-field,
+  .history-item {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .full-width {
+    grid-column: 1 / -1;
+  }
+
+  .client-field label,
+  .order-field label,
+  .history-item label {
+    font-weight: 600;
+    color: #6c757d;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .client-field span,
+  .order-field span,
+  .history-item span {
+    font-size: 16px;
+    color: #2c3e50;
+  }
+
+  .notes-content {
+    background: #f8f9fa;
+    padding: 12px;
+    border-radius: 4px;
+    border-left: 4px solid #3498db;
+    font-style: italic;
+  }
+
+  .items-table {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .table-header,
+  .table-row,
+  .table-footer {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 20px;
+    padding: 15px 20px;
+    align-items: center;
+  }
+
+  .table-header {
+    background: #f8f9fa;
+    font-weight: 600;
+    color: #6c757d;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .table-row {
+    border-top: 1px solid #f8f9fa;
+  }
+
+  .table-row:hover {
+    background: #f8f9fa;
+  }
+
+  .table-footer {
+    background: #f8f9fa;
+    border-top: 2px solid #dee2e6;
+    font-weight: 600;
+    grid-template-columns: 1fr auto;
+  }
+
+  .item-name {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .item-category {
+    color: #6c757d;
+    font-size: 12px;
+  }
+
+  .item-unit-price,
+  .item-quantity,
+  .item-total {
+    text-align: center;
+  }
+
+  .item-total,
+  .total-amount {
+    font-weight: 600;
+    color: #27ae60;
+  }
+
+  .total-amount {
+    font-size: 18px;
+  }
+
+  @media (max-width: 768px) {
+    .status-section {
+      grid-template-columns: 1fr;
+    }
+
+    .client-details,
+    .order-info,
+    .history-info {
+      grid-template-columns: 1fr;
+    }
+
+    .table-header,
+    .table-row,
+    .table-footer {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .table-header span,
+    .table-row span {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .table-header span:before,
+    .table-row span:before {
+      content: attr(data-label);
+      font-weight: 600;
+      color: #6c757d;
+    }
+  }
+</style>

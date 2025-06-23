@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Administration - Restaurant Limoges</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="admin-layout">
+    <!-- Navbar Admin -->
+    <nav class="admin-navbar">
+      <div class="admin-nav-container">
+        <div class="admin-nav-brand">
+          <%= link_to admin_root_path, class: "admin-logo" do %>
+            🍜 Admin Restaurant
+          <% end %>
+        </div>
+        
+        <div class="admin-nav-menu">
+          <%= link_to admin_root_path, class: "admin-nav-link #{'active' if current_page?(admin_root_path)}" do %>
+            📊 Dashboard
+          <% end %>
+          
+          <%= link_to admin_commandes_path, class: "admin-nav-link #{'active' if controller_name == 'commandes'}" do %>
+            📋 Commandes
+          <% end %>
+          
+          <%= link_to admin_plats_path, class: "admin-nav-link #{'active' if controller_name == 'plats'}" do %>
+            🍽️ Plats
+          <% end %>
+          
+          <%= link_to admin_categories_path, class: "admin-nav-link #{'active' if controller_name == 'categories'}" do %>
+            📁 Catégories
+          <% end %>
+        </div>
+        
+        <div class="admin-nav-user">
+          <span class="admin-user-email"><%= current_user.email %></span>
+          <%= link_to admin_logout_path, method: :delete, class: "admin-logout-btn" do %>
+            🚪 Déconnexion
+          <% end %>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Contenu principal -->
+    <main class="admin-main">
+      <div class="admin-container">
+        <!-- Messages flash -->
+        <% if notice %>
+          <div class="admin-alert admin-alert-success">
+            <%= notice %>
+          </div>
+        <% end %>
+        
+        <% if alert %>
+          <div class="admin-alert admin-alert-danger">
+            <%= alert %>
+          </div>
+        <% end %>
+        
+        <!-- Contenu de la page -->
+        <%= yield %>
+      </div>
+    </main>
+
+    <style>
+      .admin-layout {
+        background-color: #f8f9fa;
+        min-height: 100vh;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      }
+
+      .admin-navbar {
+        background: #2c3e50;
+        color: white;
+        padding: 0;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+      }
+
+      .admin-nav-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+        height: 60px;
+      }
+
+      .admin-logo {
+        font-size: 20px;
+        font-weight: bold;
+        color: white;
+        text-decoration: none;
+      }
+
+      .admin-nav-menu {
+        display: flex;
+        gap: 10px;
+      }
+
+      .admin-nav-link {
+        color: rgba(255,255,255,0.8);
+        text-decoration: none;
+        padding: 10px 15px;
+        border-radius: 5px;
+        transition: all 0.2s;
+        font-size: 14px;
+      }
+
+      .admin-nav-link:hover,
+      .admin-nav-link.active {
+        background-color: rgba(255,255,255,0.1);
+        color: white;
+      }
+
+      .admin-nav-user {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .admin-user-email {
+        font-size: 14px;
+        color: rgba(255,255,255,0.8);
+      }
+
+      .admin-logout-btn {
+        color: #e74c3c;
+        text-decoration: none;
+        padding: 8px 12px;
+        border: 1px solid #e74c3c;
+        border-radius: 4px;
+        font-size: 12px;
+        transition: all 0.2s;
+      }
+
+      .admin-logout-btn:hover {
+        background-color: #e74c3c;
+        color: white;
+      }
+
+      .admin-main {
+        padding: 20px 0;
+      }
+
+      .admin-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+
+      .admin-alert {
+        padding: 12px 20px;
+        margin-bottom: 20px;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+
+      .admin-alert-success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+
+      .admin-alert-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+
+      .admin-page-header {
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #dee2e6;
+      }
+
+      .admin-page-title {
+        font-size: 32px;
+        color: #2c3e50;
+        margin: 0 0 10px 0;
+      }
+
+      .admin-page-subtitle {
+        color: #6c757d;
+        margin: 0;
+      }
+
+      .admin-btn {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #3498db;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.2s;
+      }
+
+      .admin-btn:hover {
+        background-color: #2980b9;
+        color: white;
+      }
+
+      .admin-btn-success {
+        background-color: #27ae60;
+      }
+
+      .admin-btn-success:hover {
+        background-color: #229954;
+      }
+
+      .admin-btn-danger {
+        background-color: #e74c3c;
+      }
+
+      .admin-btn-danger:hover {
+        background-color: #c0392b;
+      }
+
+      .admin-btn-sm {
+        padding: 6px 12px;
+        font-size: 12px;
+      }
+
+      @media (max-width: 768px) {
+        .admin-nav-container {
+          flex-direction: column;
+          height: auto;
+          padding: 10px 20px;
+        }
+
+        .admin-nav-menu {
+          margin: 10px 0;
+          flex-wrap: wrap;
+          justify-content: center;
+        }
+
+        .admin-nav-user {
+          flex-direction: column;
+          gap: 10px;
+        }
+      }
+    </style>
+  </body>
+</html>

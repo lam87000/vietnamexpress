@@ -1,0 +1,336 @@
+<div class="admin-page-header">
+  <h1 class="admin-page-title">Créer un nouveau plat</h1>
+  <div class="page-actions">
+    <%= link_to admin_plats_path, class: "admin-btn" do %>
+      ← Retour aux plats
+    <% end %>
+  </div>
+</div>
+
+<div class="plat-form-container">
+  <div class="form-section">
+    <%= form_with model: [:admin, @plat], local: true, class: "plat-form" do |f| %>
+      <div class="form-grid">
+        <!-- Informations de base -->
+        <div class="form-group">
+          <%= f.label :nom, "Nom du plat *" %>
+          <%= f.text_field :nom, required: true, class: "form-control", placeholder: "Ex: Pho Bo, Banh Mi..." %>
+          <% if @plat.errors[:nom].any? %>
+            <div class="error-message">
+              <%= @plat.errors[:nom].first %>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="form-group">
+          <%= f.label :category_id, "Catégorie *" %>
+          <%= f.collection_select :category_id, @categories, :id, :name, 
+              { prompt: "Sélectionnez une catégorie" }, 
+              { required: true, class: "form-control" } %>
+          <% if @plat.errors[:category_id].any? %>
+            <div class="error-message">
+              <%= @plat.errors[:category_id].first %>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="form-group">
+          <%= f.label :prix, "Prix (€) *" %>
+          <%= f.number_field :prix, step: 0.01, min: 0, required: true, class: "form-control", placeholder: "Ex: 12.50" %>
+          <small class="form-help">Prix de vente du plat en euros</small>
+          <% if @plat.errors[:prix].any? %>
+            <div class="error-message">
+              <%= @plat.errors[:prix].first %>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="form-group">
+          <%= f.label :stock_quantity, "Stock initial *" %>
+          <%= f.number_field :stock_quantity, min: 0, required: true, class: "form-control", placeholder: "Ex: 20" %>
+          <small class="form-help">Nombre d'unités disponibles à la vente</small>
+          <% if @plat.errors[:stock_quantity].any? %>
+            <div class="error-message">
+              <%= @plat.errors[:stock_quantity].first %>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="form-group full-width">
+          <%= f.label :description, "Description *" %>
+          <%= f.text_area :description, required: true, class: "form-control", rows: 4, 
+              placeholder: "Décrivez le plat, ses ingrédients, ses spécificités..." %>
+          <small class="form-help">Description détaillée qui apparaîtra sur le menu client</small>
+          <% if @plat.errors[:description].any? %>
+            <div class="error-message">
+              <%= @plat.errors[:description].first %>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="form-group full-width">
+          <%= f.label :image_url, "URL de l'image (optionnel)" %>
+          <%= f.url_field :image_url, class: "form-control", placeholder: "https://exemple.com/image.jpg" %>
+          <small class="form-help">Lien vers une image du plat (optionnel)</small>
+          <% if @plat.errors[:image_url].any? %>
+            <div class="error-message">
+              <%= @plat.errors[:image_url].first %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <%= f.submit "Créer le plat", class: "admin-btn admin-btn-success btn-lg" %>
+        <%= link_to "Annuler", admin_plats_path, class: "admin-btn btn-lg" %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Aide et conseils -->
+  <div class="help-section">
+    <h3>💡 Conseils pour créer un plat</h3>
+    <div class="help-content">
+      <div class="help-item">
+        <h4>📝 Nom du plat</h4>
+        <p>Utilisez un nom clair et appétissant. Évitez les abréviations.</p>
+      </div>
+
+      <div class="help-item">
+        <h4>📁 Catégorie</h4>
+        <p>Choisissez la bonne catégorie pour faciliter la navigation des clients.</p>
+      </div>
+
+      <div class="help-item">
+        <h4>💰 Prix</h4>
+        <p>Définissez un prix cohérent avec votre positionnement et vos coûts.</p>
+      </div>
+
+      <div class="help-item">
+        <h4>📦 Stock</h4>
+        <p>Estimez le nombre d'unités que vous pouvez préparer par jour.</p>
+      </div>
+
+      <div class="help-item">
+        <h4>📖 Description</h4>
+        <p>Décrivez les ingrédients principaux, le style de cuisson, les allergènes éventuels.</p>
+      </div>
+
+      <div class="help-item">
+        <h4>🖼️ Image</h4>
+        <p>Une belle image augmente l'attractivité du plat. Utilisez des photos de qualité.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .plat-form-container {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 40px;
+    align-items: start;
+  }
+
+  .form-section {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+
+  .plat-form {
+    max-width: none;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+    margin-bottom: 30px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .full-width {
+    grid-column: 1 / -1;
+  }
+
+  .form-group label {
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 14px;
+  }
+
+  .form-control {
+    padding: 12px;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.2s;
+    background-color: #fff;
+  }
+
+  .form-control:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+  }
+
+  .form-control:invalid {
+    border-color: #e74c3c;
+  }
+
+  .form-help {
+    font-size: 12px;
+    color: #6c757d;
+    font-style: italic;
+    margin-top: 4px;
+  }
+
+  .error-message {
+    color: #e74c3c;
+    font-size: 12px;
+    font-weight: 500;
+    margin-top: 4px;
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 15px;
+    padding-top: 25px;
+    border-top: 1px solid #e9ecef;
+  }
+
+  .btn-lg {
+    padding: 15px 30px;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .help-section {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    height: fit-content;
+    position: sticky;
+    top: 20px;
+  }
+
+  .help-section h3 {
+    margin: 0 0 20px 0;
+    color: #2c3e50;
+    font-size: 18px;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 10px;
+  }
+
+  .help-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .help-item {
+    padding-bottom: 15px;
+    border-bottom: 1px solid #f8f9fa;
+  }
+
+  .help-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .help-item h4 {
+    margin: 0 0 8px 0;
+    color: #3498db;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .help-item p {
+    margin: 0;
+    color: #6c757d;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 1024px) {
+    .plat-form-container {
+      grid-template-columns: 1fr;
+      gap: 30px;
+    }
+
+    .help-section {
+      position: static;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .form-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .form-actions {
+      flex-direction: column;
+    }
+
+    .form-section,
+    .help-section {
+      padding: 20px;
+    }
+  }
+
+  /* Animation pour les champs requis */
+  .form-control:required:invalid {
+    animation: shake 0.3s ease-in-out;
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+  }
+
+  /* Style pour les catégories vides */
+  .form-control option[value=""] {
+    color: #6c757d;
+    font-style: italic;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Prévisualisation du prix formaté
+    const prixInput = document.querySelector('input[name="plat[prix]"]');
+    if (prixInput) {
+      prixInput.addEventListener('input', function() {
+        const value = parseFloat(this.value);
+        if (!isNaN(value)) {
+          this.style.color = '#27ae60';
+          this.style.fontWeight = '600';
+        } else {
+          this.style.color = '';
+          this.style.fontWeight = '';
+        }
+      });
+    }
+
+    // Validation en temps réel
+    const requiredInputs = document.querySelectorAll('input[required], textarea[required], select[required]');
+    requiredInputs.forEach(input => {
+      input.addEventListener('blur', function() {
+        if (this.value.trim() === '') {
+          this.style.borderColor = '#e74c3c';
+        } else {
+          this.style.borderColor = '#27ae60';
+        }
+      });
+    });
+  });
+</script>

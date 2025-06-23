@@ -1,0 +1,489 @@
+<div class="admin-page-header">
+  <h1 class="admin-page-title">Modifier "<%= @plat.nom %>"</h1>
+  <div class="page-actions">
+    <%= link_to admin_plat_path(@plat), class: "admin-btn" do %>
+      👁️ Voir le plat
+    <% end %>
+    <%= link_to admin_plats_path, class: "admin-btn" do %>
+      ← Retour aux plats
+    <% end %>
+  </div>
+</div>
+
+<div class="plat-edit-container">
+  <div class="form-section">
+    <%= form_with model: [:admin, @plat], local: true, class: "plat-form" do |f| %>
+      <div class="form-grid">
+        <!-- Informations de base -->
+        <div class="form-group">
+          <%= f.label :nom, "Nom du plat *" %>
+          <%= f.text_field :nom, required: true, class: "form-control" %>
+          <% if @plat.errors[:nom].any? %>
+            <div class="error-message">
+              <%= @plat.errors[:nom].first %>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="form-group">
+          <%= f.label :category_id, "Catégorie *" %>
+          <%= f.collection_select :category_id, @categories, :id, :name, 
+              { prompt: "Sélectionnez une catégorie" }, 
+              { required: true, class: "form-control" } %>
+          <% if @plat.errors[:category_id].any? %>
+            <div class="error-message">
+              <%= @plat.errors[:category_id].first %>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="form-group">
+          <%= f.label :prix, "Prix (€) *" %>
+          <div class="price-input-group">
+            <%= f.number_field :prix, step: 0.01, min: 0, required: true, class: "form-control price-input" %>
+            <div class="price-preview">
+              <span class="current-price">Prix actuel: <%= @plat.formatted_price %></span>
+            </div>
+          </div>
+          <small class="form-help">Modification du prix - attention aux commandes en cours</small>
+          <% if @plat.errors[:prix].any? %>
+            <div class="error-message">
+              <%= @plat.errors[:prix].first %>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="form-group">
+          <%= f.label :stock_quantity, "Stock disponible *" %>
+          <div class="stock-input-group">
+            <%= f.number_field :stock_quantity, min: 0, required: true, class: "form-control stock-input" %>
+            <div class="stock-info">
+              <span class="current-stock">Stock actuel: <%= @plat.stock_quantity %> unités</span>
+              <% if @plat.stock_quantity <= 5 %>
+                <span class="stock-warning">⚠️ Stock faible</span>
+              <% end %>
+            </div>
+          </div>
+          <small class="form-help">Modifiez selon votre capacité de production</small>
+          <% if @plat.errors[:stock_quantity].any? %>
+            <div class="error-message">
+              <%= @plat.errors[:stock_quantity].first %>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="form-group full-width">
+          <%= f.label :description, "Description *" %>
+          <%= f.text_area :description, required: true, class: "form-control", rows: 4 %>
+          <small class="form-help">Description visible par les clients</small>
+          <% if @plat.errors[:description].any? %>
+            <div class="error-message">
+              <%= @plat.errors[:description].first %>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="form-group full-width">
+          <%= f.label :image_url, "URL de l'image (optionnel)" %>
+          <div class="image-input-group">
+            <%= f.url_field :image_url, class: "form-control" %>
+            <% if @plat.image_url.present? %>
+              <div class="current-image">
+                <img src="<%= @plat.image_url %>" alt="Image actuelle" class="image-preview">
+                <span class="image-info">Image actuelle</span>
+              </div>
+            <% end %>
+          </div>
+          <small class="form-help">Lien vers une image du plat</small>
+          <% if @plat.errors[:image_url].any? %>
+            <div class="error-message">
+              <%= @plat.errors[:image_url].first %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <%= f.submit "Mettre à jour le plat", class: "admin-btn admin-btn-success btn-lg" %>
+        <%= link_to "Annuler", admin_plat_path(@plat), class: "admin-btn btn-lg" %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Informations et statistiques -->
+  <div class="info-section">
+    <div class="plat-stats">
+      <h3>📊 Statistiques du plat</h3>
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-number">
+            <%= @plat.order_items.joins(:commande).where(commandes: { statut: ['confirmee', 'prete', 'recuperee'] }).sum(:quantite) %>
+          </div>
+          <div class="stat-label">Unités vendues</div>
+        </div>
+
+        <div class="stat-item">
+          <div class="stat-number">
+            <%= @plat.order_items.joins(:commande).where(commandes: { statut: ['confirmee', 'prete', 'recuperee'] }).count %>
+          </div>
+          <div class="stat-label">Commandes</div>
+        </div>
+
+        <div class="stat-item">
+          <div class="stat-number">
+            <%= (@plat.order_items.joins(:commande).where(commandes: { statut: ['confirmee', 'prete', 'recuperee'] }).sum('quantite * prix_unitaire')).to_f %>€
+          </div>
+          <div class="stat-label">CA généré</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modification-help">
+      <h3>⚠️ Points d'attention</h3>
+      <div class="help-content">
+        <div class="help-item">
+          <h4>💰 Modification du prix</h4>
+          <p>Les commandes en cours gardent l'ancien prix. Seules les nouvelles commandes utiliseront le nouveau prix.</p>
+        </div>
+
+        <div class="help-item">
+          <h4>📦 Gestion du stock</h4>
+          <p>Assurez-vous que le stock reflète votre capacité réelle. Un stock à 0 rend le plat indisponible.</p>
+        </div>
+
+        <div class="help-item">
+          <h4>📝 Description</h4>
+          <p>Une description claire aide les clients à faire leur choix et réduit les questions.</p>
+        </div>
+
+        <div class="help-item">
+          <h4>🖼️ Image</h4>
+          <p>Changez l'image si vous avez une meilleure photo ou si la recette a évolué.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="danger-zone">
+      <h3>🗑️ Zone de danger</h3>
+      <p>Suppression définitive du plat. Cette action est irréversible.</p>
+      <%= link_to admin_plat_path(@plat), method: :delete, 
+                 class: "admin-btn admin-btn-danger",
+                 confirm: "Êtes-vous absolument sûr de vouloir supprimer '#{@plat.nom}' ? Cette action est irréversible et supprimera aussi l'historique des commandes associées." do %>
+        🗑️ Supprimer définitivement
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<style>
+  .plat-edit-container {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 40px;
+    align-items: start;
+  }
+
+  .form-section {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+
+  .info-section {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+  }
+
+  .plat-stats,
+  .modification-help,
+  .danger-zone {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+
+  .plat-stats h3,
+  .modification-help h3,
+  .danger-zone h3 {
+    margin: 0 0 20px 0;
+    color: #2c3e50;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .danger-zone {
+    border-left: 4px solid #e74c3c;
+  }
+
+  .danger-zone h3 {
+    color: #e74c3c;
+  }
+
+  .danger-zone p {
+    color: #6c757d;
+    margin-bottom: 15px;
+    font-size: 14px;
+  }
+
+  .plat-form {
+    max-width: none;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+    margin-bottom: 30px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .full-width {
+    grid-column: 1 / -1;
+  }
+
+  .form-group label {
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 14px;
+  }
+
+  .form-control {
+    padding: 12px;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.2s;
+    background-color: #fff;
+  }
+
+  .form-control:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+  }
+
+  .price-input-group,
+  .stock-input-group,
+  .image-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .price-preview,
+  .stock-info {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+  }
+
+  .current-price,
+  .current-stock {
+    font-size: 12px;
+    color: #6c757d;
+    background: #f8f9fa;
+    padding: 4px 8px;
+    border-radius: 4px;
+  }
+
+  .stock-warning {
+    font-size: 12px;
+    color: #f39c12;
+    font-weight: 600;
+  }
+
+  .current-image {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .image-preview {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+  }
+
+  .image-info {
+    font-size: 12px;
+    color: #6c757d;
+  }
+
+  .form-help {
+    font-size: 12px;
+    color: #6c757d;
+    font-style: italic;
+  }
+
+  .error-message {
+    color: #e74c3c;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 15px;
+    padding-top: 25px;
+    border-top: 1px solid #e9ecef;
+  }
+
+  .btn-lg {
+    padding: 15px 30px;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+  }
+
+  .stat-item {
+    text-align: center;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+  }
+
+  .stat-number {
+    font-size: 24px;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 5px;
+  }
+
+  .stat-label {
+    font-size: 12px;
+    color: #6c757d;
+    font-weight: 500;
+  }
+
+  .help-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .help-item {
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f8f9fa;
+  }
+
+  .help-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .help-item h4 {
+    margin: 0 0 6px 0;
+    color: #3498db;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .help-item p {
+    margin: 0;
+    color: #6c757d;
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  @media (max-width: 1024px) {
+    .plat-edit-container {
+      grid-template-columns: 1fr;
+      gap: 30px;
+    }
+
+    .info-section {
+      order: -1;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .form-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .form-actions {
+      flex-direction: column;
+    }
+
+    .stats-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .form-section,
+    .plat-stats,
+    .modification-help,
+    .danger-zone {
+      padding: 20px;
+    }
+
+    .price-preview,
+    .stock-info {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .current-image {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Mise à jour dynamique du prix affiché
+    const prixInput = document.querySelector('.price-input');
+    const pricePreview = document.querySelector('.current-price');
+    
+    if (prixInput && pricePreview) {
+      prixInput.addEventListener('input', function() {
+        const value = parseFloat(this.value);
+        if (!isNaN(value) && value > 0) {
+          pricePreview.textContent = `Nouveau prix: ${value.toFixed(2)}€`;
+          pricePreview.style.color = '#27ae60';
+          pricePreview.style.fontWeight = '600';
+        } else {
+          pricePreview.textContent = 'Prix actuel: <%= @plat.formatted_price %>';
+          pricePreview.style.color = '';
+          pricePreview.style.fontWeight = '';
+        }
+      });
+    }
+
+    // Mise à jour dynamique du stock affiché
+    const stockInput = document.querySelector('.stock-input');
+    const stockInfo = document.querySelector('.current-stock');
+    
+    if (stockInput && stockInfo) {
+      stockInput.addEventListener('input', function() {
+        const value = parseInt(this.value);
+        if (!isNaN(value) && value >= 0) {
+          stockInfo.textContent = `Nouveau stock: ${value} unités`;
+          stockInfo.style.color = value <= 5 ? '#f39c12' : '#27ae60';
+          stockInfo.style.fontWeight = '600';
+        } else {
+          stockInfo.textContent = 'Stock actuel: <%= @plat.stock_quantity %> unités';
+          stockInfo.style.color = '';
+          stockInfo.style.fontWeight = '';
+        }
+      });
+    }
+  });
+</script>

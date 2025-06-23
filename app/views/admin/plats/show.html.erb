@@ -1,0 +1,424 @@
+<div class="admin-page-header">
+  <h1 class="admin-page-title"><%= @plat.nom %></h1>
+  <div class="page-actions">
+    <%= link_to edit_admin_plat_path(@plat), class: "admin-btn admin-btn-success" do %>
+      ✏️ Modifier
+    <% end %>
+    <%= link_to admin_plats_path, class: "admin-btn" do %>
+      ← Retour aux plats
+    <% end %>
+  </div>
+</div>
+
+<div class="plat-detail-container">
+  <!-- Image et informations principales -->
+  <div class="plat-main-section">
+    <div class="plat-image-section">
+      <% if @plat.image_url.present? %>
+        <img src="<%= @plat.image_url %>" alt="<%= @plat.nom %>" class="plat-main-image">
+      <% else %>
+        <div class="plat-placeholder">
+          <span class="placeholder-icon">🍽️</span>
+          <p>Aucune image disponible</p>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="plat-info-section">
+      <div class="info-grid">
+        <div class="info-item">
+          <label>Nom du plat</label>
+          <span class="plat-name"><%= @plat.nom %></span>
+        </div>
+
+        <div class="info-item">
+          <label>Catégorie</label>
+          <span class="category-badge"><%= @plat.category.name %></span>
+        </div>
+
+        <div class="info-item">
+          <label>Prix</label>
+          <span class="price-display"><%= @plat.formatted_price %></span>
+        </div>
+
+        <div class="info-item">
+          <label>Stock disponible</label>
+          <span class="stock-display <%= 'low-stock' if @plat.stock_quantity <= 5 %>">
+            <%= @plat.stock_quantity %> unités
+          </span>
+        </div>
+
+        <div class="info-item">
+          <label>Disponibilité</label>
+          <span class="availability-badge <%= @plat.available? ? 'available' : 'unavailable' %>">
+            <%= @plat.available? ? '✅ Disponible' : '❌ Indisponible' %>
+          </span>
+        </div>
+
+        <div class="info-item full-width">
+          <label>Description</label>
+          <div class="description-content">
+            <%= simple_format(@plat.description) %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Actions rapides -->
+  <div class="quick-actions-section">
+    <h3>Actions rapides</h3>
+    <div class="actions-grid">
+      <%= link_to edit_admin_plat_path(@plat), class: "action-card edit-action" do %>
+        <div class="action-icon">✏️</div>
+        <div class="action-content">
+          <h4>Modifier le plat</h4>
+          <p>Changer le prix, la description ou le stock</p>
+        </div>
+      <% end %>
+
+      <% if @plat.available? %>
+        <div class="action-card stock-action">
+          <div class="action-icon">📦</div>
+          <div class="action-content">
+            <h4>Gestion du stock</h4>
+            <p>Stock actuel: <%= @plat.stock_quantity %> unités</p>
+            <% if @plat.stock_quantity <= 5 %>
+              <small class="stock-warning">⚠️ Stock faible</small>
+            <% end %>
+          </div>
+        </div>
+      <% else %>
+        <div class="action-card unavailable-action">
+          <div class="action-icon">❌</div>
+          <div class="action-content">
+            <h4>Produit indisponible</h4>
+            <p>Stock épuisé (0 unité)</p>
+          </div>
+        </div>
+      <% end %>
+
+      <%= link_to admin_plat_path(@plat), method: :delete, 
+                 class: "action-card delete-action",
+                 confirm: "Êtes-vous sûr de vouloir supprimer ce plat définitivement ?" do %>
+        <div class="action-icon">🗑️</div>
+        <div class="action-content">
+          <h4>Supprimer</h4>
+          <p>Retirer ce plat du menu</p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Statistiques du plat -->
+  <div class="plat-stats-section">
+    <h3>Statistiques</h3>
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-number">
+          <%= @plat.order_items.joins(:commande).where(commandes: { statut: ['confirmee', 'prete', 'recuperee'] }).sum(:quantite) %>
+        </div>
+        <div class="stat-label">Unités vendues</div>
+      </div>
+
+      <div class="stat-item">
+        <div class="stat-number">
+          <%= @plat.order_items.joins(:commande).where(commandes: { statut: ['confirmee', 'prete', 'recuperee'] }).count %>
+        </div>
+        <div class="stat-label">Commandes</div>
+      </div>
+
+      <div class="stat-item">
+        <div class="stat-number">
+          <%= (@plat.order_items.joins(:commande).where(commandes: { statut: ['confirmee', 'prete', 'recuperee'] }).sum('quantite * prix_unitaire')).to_f %>€
+        </div>
+        <div class="stat-label">Chiffre d'affaires</div>
+      </div>
+
+      <div class="stat-item">
+        <div class="stat-number">
+          <%= @plat.created_at.strftime('%d/%m/%Y') %>
+        </div>
+        <div class="stat-label">Ajouté le</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .plat-detail-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .plat-main-section {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 40px;
+    align-items: start;
+  }
+
+  .plat-image-section {
+    position: relative;
+  }
+
+  .plat-main-image {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+
+  .plat-placeholder {
+    width: 100%;
+    height: 300px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed #dee2e6;
+  }
+
+  .placeholder-icon {
+    font-size: 64px;
+    margin-bottom: 10px;
+  }
+
+  .plat-placeholder p {
+    margin: 0;
+    color: #6c757d;
+    font-size: 14px;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+  }
+
+  .info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .full-width {
+    grid-column: 1 / -1;
+  }
+
+  .info-item label {
+    font-weight: 600;
+    color: #6c757d;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .plat-name {
+    font-size: 24px;
+    font-weight: bold;
+    color: #2c3e50;
+  }
+
+  .category-badge {
+    background: #3498db;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    display: inline-block;
+    width: fit-content;
+  }
+
+  .price-display {
+    font-size: 28px;
+    font-weight: bold;
+    color: #27ae60;
+  }
+
+  .stock-display {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2c3e50;
+  }
+
+  .stock-display.low-stock {
+    color: #e74c3c;
+  }
+
+  .availability-badge {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    display: inline-block;
+    width: fit-content;
+  }
+
+  .availability-badge.available {
+    background: #d4edda;
+    color: #155724;
+  }
+
+  .availability-badge.unavailable {
+    background: #f8d7da;
+    color: #721c24;
+  }
+
+  .description-content {
+    background: #f8f9fa;
+    padding: 16px;
+    border-radius: 8px;
+    border-left: 4px solid #3498db;
+    line-height: 1.6;
+    color: #2c3e50;
+  }
+
+  .quick-actions-section,
+  .plat-stats-section {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+
+  .quick-actions-section h3,
+  .plat-stats-section h3 {
+    margin: 0 0 25px 0;
+    color: #2c3e50;
+    font-size: 20px;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 10px;
+  }
+
+  .actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+  }
+
+  .action-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 20px;
+    border-radius: 10px;
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 2px solid transparent;
+  }
+
+  .action-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+  }
+
+  .edit-action {
+    background: #e3f2fd;
+    color: #1565c0;
+  }
+
+  .edit-action:hover {
+    border-color: #1565c0;
+    color: #1565c0;
+  }
+
+  .stock-action {
+    background: #f3e5f5;
+    color: #7b1fa2;
+    cursor: default;
+  }
+
+  .unavailable-action {
+    background: #ffebee;
+    color: #c62828;
+    cursor: default;
+  }
+
+  .delete-action {
+    background: #ffebee;
+    color: #c62828;
+  }
+
+  .delete-action:hover {
+    border-color: #c62828;
+    color: #c62828;
+  }
+
+  .action-icon {
+    font-size: 24px;
+  }
+
+  .action-content h4 {
+    margin: 0 0 5px 0;
+    font-size: 16px;
+  }
+
+  .action-content p {
+    margin: 0;
+    font-size: 14px;
+    opacity: 0.8;
+  }
+
+  .stock-warning {
+    display: block;
+    margin-top: 5px;
+    font-weight: 600;
+    color: #f39c12;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+  }
+
+  .stat-item {
+    text-align: center;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    border-left: 4px solid #3498db;
+  }
+
+  .stat-number {
+    font-size: 32px;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 8px;
+  }
+
+  .stat-label {
+    font-size: 14px;
+    color: #6c757d;
+    font-weight: 500;
+  }
+
+  @media (max-width: 768px) {
+    .plat-main-section {
+      grid-template-columns: 1fr;
+      gap: 25px;
+    }
+
+    .info-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .actions-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .stats-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>

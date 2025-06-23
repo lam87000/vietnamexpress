@@ -26,4 +26,27 @@ Rails.application.routes.draw do
   
   # Route pour contacter le restaurant
   get 'contact', to: 'page#contact'
+  
+  # Routes administrateur
+  namespace :admin do
+    root 'dashboard#index'
+    
+    # Authentification admin
+    get 'login', to: 'sessions#new'
+    post 'login', to: 'sessions#create'
+    delete 'logout', to: 'sessions#destroy'
+    
+    # Gestion des commandes
+    resources :commandes, only: [:index, :show, :edit, :update] do
+      member do
+        patch :change_status
+      end
+    end
+    
+    # Gestion des plats
+    resources :plats
+    
+    # Gestion des catégories
+    resources :categories, except: [:show]
+  end
 end

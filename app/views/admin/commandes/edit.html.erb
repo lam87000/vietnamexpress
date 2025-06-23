@@ -1,0 +1,291 @@
+<div class="admin-page-header">
+  <h1 class="admin-page-title">Modifier la commande #<%= @commande.id %></h1>
+  <div class="page-actions">
+    <%= link_to admin_commande_path(@commande), class: "admin-btn" do %>
+      ← Retour aux détails
+    <% end %>
+  </div>
+</div>
+
+<div class="edit-commande-container">
+  <!-- Informations non modifiables -->
+  <div class="readonly-section">
+    <h3>Informations de la commande</h3>
+    <div class="readonly-info">
+      <div class="info-grid">
+        <div class="info-item">
+          <label>Client</label>
+          <span><%= @commande.client_nom %></span>
+        </div>
+        
+        <div class="info-item">
+          <label>Email</label>
+          <span><%= @commande.client_email %></span>
+        </div>
+        
+        <div class="info-item">
+          <label>Téléphone</label>
+          <span><%= @commande.client_telephone %></span>
+        </div>
+        
+        <div class="info-item">
+          <label>Date de commande</label>
+          <span><%= @commande.created_at.strftime('%d/%m/%Y à %H:%M') %></span>
+        </div>
+        
+        <div class="info-item">
+          <label>Montant total</label>
+          <span class="total-amount"><%= @commande.montant_total.to_f %>€</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Articles commandés (readonly) -->
+  <div class="items-readonly-section">
+    <h3>Articles commandés</h3>
+    <div class="items-list">
+      <% @commande.order_items.includes(:plat).each do |item| %>
+        <div class="item-row">
+          <span class="item-name"><%= item.plat.nom %></span>
+          <span class="item-quantity">x<%= item.quantite %></span>
+          <span class="item-price"><%= item.total_price.to_f %>€</span>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Formulaire de modification -->
+  <div class="edit-form-section">
+    <h3>Modifier les informations</h3>
+    
+    <%= form_with model: [:admin, @commande], local: true, class: "edit-form" do |f| %>
+      <div class="form-group">
+        <%= f.label :statut, "Statut de la commande" %>
+        <%= f.select :statut, 
+            options_for_select([
+              ['En attente', 'en_attente'],
+              ['Confirmée', 'confirmee'],
+              ['Prête', 'prete'],
+              ['Récupérée', 'recuperee'],
+              ['Annulée', 'annulee']
+            ], @commande.statut), 
+            {}, 
+            { class: "form-control" } %>
+        <small class="form-help">Changez le statut selon l'avancement de la commande</small>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :notes, "Notes administrateur" %>
+        <%= f.text_area :notes, 
+            class: "form-control", 
+            rows: 4,
+            placeholder: "Ajoutez des notes internes sur cette commande..." %>
+        <small class="form-help">Ces notes ne sont visibles que par les administrateurs</small>
+      </div>
+
+      <div class="form-actions">
+        <%= f.submit "Mettre à jour la commande", class: "admin-btn admin-btn-success" %>
+        <%= link_to "Annuler", admin_commande_path(@commande), class: "admin-btn" %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Informations d'aide -->
+  <div class="help-section">
+    <h3>ℹ️ Informations importantes</h3>
+    <div class="help-content">
+      <ul>
+        <li><strong>En attente :</strong> Commande reçue, en attente de confirmation</li>
+        <li><strong>Confirmée :</strong> Commande validée, en cours de préparation</li>
+        <li><strong>Prête :</strong> Commande terminée, prête à être récupérée</li>
+        <li><strong>Récupérée :</strong> Commande remise au client</li>
+        <li><strong>Annulée :</strong> Commande annulée (stock remis à jour automatiquement)</li>
+      </ul>
+      
+      <div class="warning-box">
+        <p><strong>⚠️ Attention :</strong> La modification du statut vers "Annulée" remettra automatiquement le stock des produits à jour.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .edit-commande-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .readonly-section,
+  .items-readonly-section,
+  .edit-form-section,
+  .help-section {
+    background: white;
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  .readonly-section h3,
+  .items-readonly-section h3,
+  .edit-form-section h3,
+  .help-section h3 {
+    margin: 0 0 20px 0;
+    color: #2c3e50;
+    font-size: 18px;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 10px;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+  }
+
+  .info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .info-item label {
+    font-weight: 600;
+    color: #6c757d;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .info-item span {
+    font-size: 16px;
+    color: #2c3e50;
+  }
+
+  .total-amount {
+    font-weight: 600;
+    color: #27ae60;
+    font-size: 18px;
+  }
+
+  .items-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .item-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    border-left: 4px solid #3498db;
+  }
+
+  .item-name {
+    flex: 1;
+    font-weight: 500;
+  }
+
+  .item-quantity {
+    color: #6c757d;
+    margin: 0 20px;
+  }
+
+  .item-price {
+    font-weight: 600;
+    color: #27ae60;
+  }
+
+  .edit-form {
+    max-width: 600px;
+  }
+
+  .form-group {
+    margin-bottom: 25px;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #2c3e50;
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+  }
+
+  .form-control:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+  }
+
+  .form-help {
+    display: block;
+    margin-top: 5px;
+    font-size: 12px;
+    color: #6c757d;
+    font-style: italic;
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 15px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+  }
+
+  .help-content ul {
+    margin: 0 0 20px 0;
+    padding-left: 20px;
+  }
+
+  .help-content li {
+    margin-bottom: 8px;
+    line-height: 1.5;
+  }
+
+  .warning-box {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 6px;
+    padding: 15px;
+    border-left: 4px solid #f39c12;
+  }
+
+  .warning-box p {
+    margin: 0;
+    color: #856404;
+  }
+
+  @media (max-width: 768px) {
+    .info-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .item-row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .item-quantity {
+      margin: 0;
+    }
+
+    .form-actions {
+      flex-direction: column;
+    }
+  }
+</style>

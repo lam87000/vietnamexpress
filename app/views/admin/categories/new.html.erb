@@ -1,0 +1,391 @@
+<div class="admin-page-header">
+  <h1 class="admin-page-title">Créer une nouvelle catégorie</h1>
+  <div class="page-actions">
+    <%= link_to admin_categories_path, class: "admin-btn" do %>
+      ← Retour aux catégories
+    <% end %>
+  </div>
+</div>
+
+<div class="category-form-container">
+  <div class="form-section">
+    <%= form_with model: [:admin, @category], local: true, class: "category-form" do |f| %>
+      <div class="form-content">
+        <div class="form-group">
+          <%= f.label :name, "Nom de la catégorie *" %>
+          <%= f.text_field :name, required: true, class: "form-control", 
+              placeholder: "Ex: Entrées, Plats principaux, Desserts..." %>
+          <small class="form-help">Nom qui apparaîtra dans le menu client</small>
+          <% if @category.errors[:name].any? %>
+            <div class="error-message">
+              <%= @category.errors[:name].first %>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="form-group">
+          <%= f.label :description, "Description (optionnel)" %>
+          <%= f.text_area :description, class: "form-control", rows: 4,
+              placeholder: "Description de la catégorie pour aider les clients..." %>
+          <small class="form-help">Description optionnelle affichée sous le nom de la catégorie</small>
+          <% if @category.errors[:description].any? %>
+            <div class="error-message">
+              <%= @category.errors[:description].first %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <%= f.submit "Créer la catégorie", class: "admin-btn admin-btn-success btn-lg" %>
+        <%= link_to "Annuler", admin_categories_path, class: "admin-btn btn-lg" %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Aide et suggestions -->
+  <div class="help-section">
+    <h3>💡 Suggestions de catégories</h3>
+    <div class="help-content">
+      <div class="category-suggestions">
+        <div class="suggestion-item" data-name="Entrées" data-description="Plats pour commencer le repas">
+          <h4>🥗 Entrées</h4>
+          <p>Salades, soupes, rouleaux de printemps...</p>
+          <button type="button" class="use-suggestion admin-btn admin-btn-sm">Utiliser</button>
+        </div>
+
+        <div class="suggestion-item" data-name="Plats principaux" data-description="Nos spécialités vietnamiennes traditionnelles">
+          <h4>🍜 Plats principaux</h4>
+          <p>Pho, Bun Bo, plats de riz et nouilles...</p>
+          <button type="button" class="use-suggestion admin-btn admin-btn-sm">Utiliser</button>
+        </div>
+
+        <div class="suggestion-item" data-name="Boissons" data-description="Thés, cafés et boissons fraîches">
+          <h4>🧋 Boissons</h4>
+          <p>Thé vietnamien, café glacé, smoothies...</p>
+          <button type="button" class="use-suggestion admin-btn admin-btn-sm">Utiliser</button>
+        </div>
+
+        <div class="suggestion-item" data-name="Desserts" data-description="Douceurs pour terminer en beauté">
+          <h4>🍮 Desserts</h4>
+          <p>Che ba mau, flan coco, fruits frais...</p>
+          <button type="button" class="use-suggestion admin-btn admin-btn-sm">Utiliser</button>
+        </div>
+
+        <div class="suggestion-item" data-name="Végétarien" data-description="Options végétariennes savoureuses">
+          <h4>🌱 Végétarien</h4>
+          <p>Plats sans viande ni poisson...</p>
+          <button type="button" class="use-suggestion admin-btn admin-btn-sm">Utiliser</button>
+        </div>
+
+        <div class="suggestion-item" data-name="Spécialités" data-description="Nos créations signature">
+          <h4>⭐ Spécialités</h4>
+          <p>Plats uniques de la maison...</p>
+          <button type="button" class="use-suggestion admin-btn admin-btn-sm">Utiliser</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="tips-section">
+      <h3>📋 Conseils</h3>
+      <div class="tips-content">
+        <div class="tip-item">
+          <h4>🎯 Nommage efficace</h4>
+          <p>Utilisez des noms clairs et familiers pour vos clients</p>
+        </div>
+
+        <div class="tip-item">
+          <h4>📝 Description utile</h4>
+          <p>Une courte description aide les clients à naviguer plus facilement</p>
+        </div>
+
+        <div class="tip-item">
+          <h4>🗂️ Organisation logique</h4>
+          <p>Organisez selon le déroulement d'un repas (entrées → plats → desserts)</p>
+        </div>
+
+        <div class="tip-item">
+          <h4>🔄 Évolution possible</h4>
+          <p>Vous pourrez toujours modifier ou supprimer les catégories plus tard</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .category-form-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: start;
+  }
+
+  .form-section {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+
+  .category-form {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .form-content {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .form-group label {
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 14px;
+  }
+
+  .form-control {
+    padding: 12px;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.2s;
+    background-color: #fff;
+  }
+
+  .form-control:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+  }
+
+  .form-help {
+    font-size: 12px;
+    color: #6c757d;
+    font-style: italic;
+  }
+
+  .error-message {
+    color: #e74c3c;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 15px;
+    padding-top: 20px;
+    border-top: 1px solid #e9ecef;
+  }
+
+  .btn-lg {
+    padding: 15px 30px;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .help-section {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    height: fit-content;
+    position: sticky;
+    top: 20px;
+  }
+
+  .help-section h3 {
+    margin: 0 0 20px 0;
+    color: #2c3e50;
+    font-size: 18px;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 10px;
+  }
+
+  .category-suggestions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+    margin-bottom: 30px;
+  }
+
+  .suggestion-item {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 15px;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+
+  .suggestion-item:hover {
+    background: #e9ecef;
+    border-color: #3498db;
+  }
+
+  .suggestion-item h4 {
+    margin: 0 0 6px 0;
+    color: #2c3e50;
+    font-size: 14px;
+  }
+
+  .suggestion-item p {
+    margin: 0 0 10px 0;
+    color: #6c757d;
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  .use-suggestion {
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .suggestion-item:hover .use-suggestion {
+    opacity: 1;
+  }
+
+  .tips-section {
+    border-top: 1px solid #e9ecef;
+    padding-top: 20px;
+  }
+
+  .tips-section h3 {
+    margin: 0 0 15px 0;
+    color: #2c3e50;
+    font-size: 16px;
+  }
+
+  .tips-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .tip-item {
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f8f9fa;
+  }
+
+  .tip-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .tip-item h4 {
+    margin: 0 0 6px 0;
+    color: #3498db;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .tip-item p {
+    margin: 0;
+    color: #6c757d;
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  @media (max-width: 1024px) {
+    .category-form-container {
+      grid-template-columns: 1fr;
+      gap: 30px;
+    }
+
+    .help-section {
+      position: static;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .form-actions {
+      flex-direction: column;
+    }
+
+    .form-section,
+    .help-section {
+      padding: 20px;
+    }
+
+    .category-suggestions {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Gestion des suggestions de catégories
+    const suggestions = document.querySelectorAll('.suggestion-item');
+    const nameInput = document.querySelector('input[name="category[name]"]');
+    const descriptionInput = document.querySelector('textarea[name="category[description]"]');
+
+    suggestions.forEach(suggestion => {
+      suggestion.addEventListener('click', function(e) {
+        if (e.target.classList.contains('use-suggestion')) {
+          e.stopPropagation();
+          
+          const name = this.dataset.name;
+          const description = this.dataset.description;
+          
+          if (nameInput) nameInput.value = name;
+          if (descriptionInput) descriptionInput.value = description;
+          
+          // Animation de confirmation
+          this.style.background = '#d4edda';
+          this.style.borderColor = '#c3e6cb';
+          
+          setTimeout(() => {
+            this.style.background = '';
+            this.style.borderColor = '';
+          }, 1000);
+        }
+      });
+    });
+
+    // Validation en temps réel
+    if (nameInput) {
+      nameInput.addEventListener('input', function() {
+        if (this.value.trim().length >= 2) {
+          this.style.borderColor = '#27ae60';
+        } else {
+          this.style.borderColor = '#e9ecef';
+        }
+      });
+    }
+
+    // Compteur de caractères pour la description
+    if (descriptionInput) {
+      const maxLength = 200;
+      const counter = document.createElement('small');
+      counter.className = 'char-counter';
+      counter.style.color = '#6c757d';
+      counter.style.fontSize = '11px';
+      counter.style.marginTop = '4px';
+      
+      descriptionInput.parentNode.appendChild(counter);
+      
+      function updateCounter() {
+        const current = descriptionInput.value.length;
+        counter.textContent = `${current}/${maxLength} caractères`;
+        
+        if (current > maxLength * 0.9) {
+          counter.style.color = '#f39c12';
+        } else {
+          counter.style.color = '#6c757d';
+        }
+      }
+      
+      updateCounter();
+      descriptionInput.addEventListener('input', updateCounter);
+    }
+  });
+</script>

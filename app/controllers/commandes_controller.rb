@@ -60,7 +60,7 @@ class CommandesController < ApplicationController
   def create
     @commande = Commande.new(commande_params)
     
-    if @commande.valid? && session[:cart].present?
+    if session[:cart].present?
       result = OrderCreationService.new(@commande, session[:cart]).call
       
       if result.success?
@@ -74,6 +74,7 @@ class CommandesController < ApplicationController
         render :new
       end
     else
+      flash.now[:alert] = "Votre panier est vide. Ajoutez des plats avant de confirmer votre commande."
       @categories = Category.includes(:plats).joins(:plats).where(plats: { available: true }).distinct
       @cart_items = session[:cart] || {}
       @total = calculate_cart_total

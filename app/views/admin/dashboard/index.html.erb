@@ -1,0 +1,329 @@
+<div class="admin-page-header">
+  <h1 class="admin-page-title">Dashboard</h1>
+  <p class="admin-page-subtitle">Vue d'ensemble de votre restaurant</p>
+</div>
+
+<!-- Statistiques du jour -->
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-icon">📋</div>
+    <div class="stat-content">
+      <div class="stat-number"><%= @stats[:today_orders_count] %></div>
+      <div class="stat-label">Commandes aujourd'hui</div>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon">💰</div>
+    <div class="stat-content">
+      <div class="stat-number"><%= @stats[:today_revenue].to_f %>€</div>
+      <div class="stat-label">Chiffre d'affaires</div>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon">⏳</div>
+    <div class="stat-content">
+      <div class="stat-number"><%= @stats[:pending_count] %></div>
+      <div class="stat-label">En attente</div>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon">⚠️</div>
+    <div class="stat-content">
+      <div class="stat-number"><%= @stats[:low_stock_plats] %></div>
+      <div class="stat-label">Stock faible</div>
+    </div>
+  </div>
+</div>
+
+<!-- Commandes du jour -->
+<div class="dashboard-section">
+  <div class="section-header">
+    <h2>Commandes du jour</h2>
+    <%= link_to "Voir toutes", admin_commandes_path, class: "admin-btn admin-btn-sm" %>
+  </div>
+
+  <% if @today_orders.any? %>
+    <div class="orders-tabs">
+      <div class="tab-buttons">
+        <button class="tab-btn active" data-status="pending">
+          En attente (<%= @pending_orders.count %>)
+        </button>
+        <button class="tab-btn" data-status="confirmed">
+          Confirmées (<%= @confirmed_orders.count %>)
+        </button>
+        <button class="tab-btn" data-status="ready">
+          Prêtes (<%= @ready_orders.count %>)
+        </button>
+      </div>
+
+      <div class="tab-content">
+        <div class="tab-panel active" id="pending-orders">
+          <% @pending_orders.each do |commande| %>
+            <div class="order-card">
+              <div class="order-header">
+                <strong>#<%= commande.id %> - <%= commande.client_nom %></strong>
+                <span class="order-time"><%= commande.formatted_pickup_time %></span>
+              </div>
+              <div class="order-details">
+                <div class="order-items">
+                  <% commande.order_items.each do |item| %>
+                    <span class="order-item"><%= item.quantite %>x <%= item.plat.nom %></span>
+                  <% end %>
+                </div>
+                <div class="order-total"><%= commande.montant_total.to_f %>€</div>
+              </div>
+              <div class="order-actions">
+                <%= link_to "Confirmer", change_status_admin_commande_path(commande, status: 'confirmee'), 
+                           data: { turbo_method: :patch }, class: "admin-btn admin-btn-success admin-btn-sm" %>
+                <%= link_to "Voir", admin_commande_path(commande), class: "admin-btn admin-btn-sm" %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="tab-panel" id="confirmed-orders">
+          <% @confirmed_orders.each do |commande| %>
+            <div class="order-card">
+              <div class="order-header">
+                <strong>#<%= commande.id %> - <%= commande.client_nom %></strong>
+                <span class="order-time"><%= commande.formatted_pickup_time %></span>
+              </div>
+              <div class="order-details">
+                <div class="order-items">
+                  <% commande.order_items.each do |item| %>
+                    <span class="order-item"><%= item.quantite %>x <%= item.plat.nom %></span>
+                  <% end %>
+                </div>
+                <div class="order-total"><%= commande.montant_total.to_f %>€</div>
+              </div>
+              <div class="order-actions">
+                <%= link_to "Marquer prête", change_status_admin_commande_path(commande, status: 'prete'), 
+                           data: { turbo_method: :patch }, class: "admin-btn admin-btn-success admin-btn-sm" %>
+                <%= link_to "Voir", admin_commande_path(commande), class: "admin-btn admin-btn-sm" %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="tab-panel" id="ready-orders">
+          <% @ready_orders.each do |commande| %>
+            <div class="order-card">
+              <div class="order-header">
+                <strong>#<%= commande.id %> - <%= commande.client_nom %></strong>
+                <span class="order-time"><%= commande.formatted_pickup_time %></span>
+              </div>
+              <div class="order-details">
+                <div class="order-items">
+                  <% commande.order_items.each do |item| %>
+                    <span class="order-item"><%= item.quantite %>x <%= item.plat.nom %></span>
+                  <% end %>
+                </div>
+                <div class="order-total"><%= commande.montant_total.to_f %>€</div>
+              </div>
+              <div class="order-actions">
+                <%= link_to "Marquer récupérée", change_status_admin_commande_path(commande, status: 'recuperee'), 
+                           data: { turbo_method: :patch }, class: "admin-btn admin-btn-success admin-btn-sm" %>
+                <%= link_to "Voir", admin_commande_path(commande), class: "admin-btn admin-btn-sm" %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% else %>
+    <div class="empty-state">
+      <p>Aucune commande aujourd'hui</p>
+    </div>
+  <% end %>
+</div>
+
+<style>
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+  }
+
+  .stat-card {
+    background: white;
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .stat-icon {
+    font-size: 32px;
+  }
+
+  .stat-number {
+    font-size: 32px;
+    font-weight: bold;
+    color: #2c3e50;
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 14px;
+    color: #6c757d;
+    margin-top: 4px;
+  }
+
+  .dashboard-section {
+    background: white;
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+  }
+
+  .section-header h2 {
+    margin: 0;
+    color: #2c3e50;
+  }
+
+  .orders-tabs {
+    margin-top: 20px;
+  }
+
+  .tab-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+  }
+
+  .tab-btn {
+    padding: 10px 16px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #6c757d;
+    font-size: 14px;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+
+  .tab-btn.active {
+    color: #3498db;
+    border-bottom-color: #3498db;
+  }
+
+  .tab-panel {
+    display: none;
+  }
+
+  .tab-panel.active {
+    display: block;
+  }
+
+  .order-card {
+    border: 1px solid #eee;
+    border-radius: 6px;
+    padding: 16px;
+    margin-bottom: 12px;
+    background: #f8f9fa;
+  }
+
+  .order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .order-time {
+    font-size: 12px;
+    color: #6c757d;
+  }
+
+  .order-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .order-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .order-item {
+    background: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #6c757d;
+  }
+
+  .order-total {
+    font-weight: bold;
+    color: #27ae60;
+  }
+
+  .order-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px;
+    color: #6c757d;
+  }
+
+  @media (max-width: 768px) {
+    .stats-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .order-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 5px;
+    }
+
+    .order-details {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabPanels = document.querySelectorAll('.tab-panel');
+
+    tabButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const status = this.dataset.status;
+        
+        // Update active tab button
+        tabButtons.forEach(btn => btn.classList.remove('active'));
+        this.classList.add('active');
+        
+        // Update active tab panel
+        tabPanels.forEach(panel => panel.classList.remove('active'));
+        document.getElementById(status + '-orders').classList.add('active');
+      });
+    });
+  });
+</script>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_06_20_135302) do
+ActiveRecord::Schema[7.1].define(version: 2025_06_23_073401) do
   create_table "categories", force: :cascade do |t|
     t.string "name", null: false
     t.text "description"
@@ -60,6 +60,15 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_20_135302) do
     t.index ["available"], name: "index_plats_on_available"
     t.index ["category_id"], name: "index_plats_on_category_id"
     t.index ["nom"], name: "index_plats_on_nom"
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string "email", null: false
+    t.string "password_digest", null: false
+    t.boolean "admin", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_users_on_email", unique: true
   end
 
   add_foreign_key "order_items", "commandes"

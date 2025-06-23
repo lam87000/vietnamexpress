@@ -4,7 +4,7 @@ class Commande < ApplicationRecord
   
   validates :jour_commande, presence: true
   validates :heure_retrait, presence: true
-  validates :montant_total, presence: true, numericality: { greater_than: 0 }
+  validates :montant_total, numericality: { greater_than: 0 }, allow_nil: true
   validates :client_nom, presence: true
   validates :client_telephone, presence: true
   validates :client_email, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP }

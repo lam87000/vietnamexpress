@@ -1,0 +1,414 @@
+<div class="admin-page-header">
+  <h1 class="admin-page-title">Modifier "<%= @category.name %>"</h1>
+  <div class="page-actions">
+    <%= link_to admin_categories_path, class: "admin-btn" do %>
+      ← Retour aux catégories
+    <% end %>
+  </div>
+</div>
+
+<div class="category-edit-container">
+  <div class="form-section">
+    <%= form_with model: [:admin, @category], local: true, class: "category-form" do |f| %>
+      <div class="form-content">
+        <div class="form-group">
+          <%= f.label :name, "Nom de la catégorie *" %>
+          <%= f.text_field :name, required: true, class: "form-control" %>
+          <small class="form-help">Nom affiché dans le menu client</small>
+          <% if @category.errors[:name].any? %>
+            <div class="error-message">
+              <%= @category.errors[:name].first %>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="form-group">
+          <%= f.label :description, "Description (optionnel)" %>
+          <%= f.text_area :description, class: "form-control", rows: 4 %>
+          <small class="form-help">Description affichée sous le nom de la catégorie</small>
+          <% if @category.errors[:description].any? %>
+            <div class="error-message">
+              <%= @category.errors[:description].first %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <%= f.submit "Mettre à jour", class: "admin-btn admin-btn-success btn-lg" %>
+        <%= link_to "Annuler", admin_categories_path, class: "admin-btn btn-lg" %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Informations et statistiques -->
+  <div class="info-section">
+    <!-- Statistiques de la catégorie -->
+    <div class="category-stats">
+      <h3>📊 Statistiques de la catégorie</h3>
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-number"><%= @category.plats.count %></div>
+          <div class="stat-label">Plats</div>
+        </div>
+
+        <div class="stat-item">
+          <div class="stat-number"><%= @category.plats.available.count %></div>
+          <div class="stat-label">Disponibles</div>
+        </div>
+
+        <div class="stat-item">
+          <div class="stat-number">
+            <%= @category.plats.joins(:order_items).joins('JOIN commandes ON order_items.commande_id = commandes.id')
+                        .where(commandes: { statut: ['confirmee', 'prete', 'recuperee'] })
+                        .sum('order_items.quantite') %>
+          </div>
+          <div class="stat-label">Vendues</div>
+        </div>
+
+        <div class="stat-item">
+          <div class="stat-number">
+            <%= (@category.plats.joins(:order_items).joins('JOIN commandes ON order_items.commande_id = commandes.id')
+                         .where(commandes: { statut: ['confirmee', 'prete', 'recuperee'] })
+                         .sum('order_items.quantite * order_items.prix_unitaire')).to_f %>€
+          </div>
+          <div class="stat-label">CA généré</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Plats de la catégorie -->
+    <div class="category-plats">
+      <h3>🍽️ Plats dans cette catégorie</h3>
+      <% if @category.plats.any? %>
+        <div class="plats-list">
+          <% @category.plats.each do |plat| %>
+            <div class="plat-item">
+              <div class="plat-info">
+                <h4><%= plat.nom %></h4>
+                <div class="plat-details">
+                  <span class="plat-price"><%= plat.formatted_price %></span>
+                  <span class="plat-stock <%= 'low-stock' if plat.stock_quantity <= 5 %>">
+                    Stock: <%= plat.stock_quantity %>
+                  </span>
+                  <span class="plat-status <%= plat.available? ? 'available' : 'unavailable' %>">
+                    <%= plat.available? ? 'Disponible' : 'Indisponible' %>
+                  </span>
+                </div>
+              </div>
+              <div class="plat-actions">
+                <%= link_to admin_plat_path(plat), class: "admin-btn admin-btn-sm" do %>
+                  👁️ Voir
+                <% end %>
+                <%= link_to edit_admin_plat_path(plat), class: "admin-btn admin-btn-sm" do %>
+                  ✏️ Modifier
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+        
+        <div class="plats-actions">
+          <%= link_to new_admin_plat_path(category_id: @category.id), class: "admin-btn admin-btn-success" do %>
+            ➕ Ajouter un plat à cette catégorie
+          <% end %>
+        </div>
+      <% else %>
+        <div class="empty-plats">
+          <p>🍽️ Aucun plat dans cette catégorie</p>
+          <%= link_to new_admin_plat_path(category_id: @category.id), class: "admin-btn admin-btn-success" do %>
+            Ajouter le premier plat
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Zone de danger -->
+    <div class="danger-zone">
+      <h3>🗑️ Zone de danger</h3>
+      <% if @category.plats.any? %>
+        <p class="danger-warning">
+          ⚠️ Cette catégorie contient <%= pluralize(@category.plats.count, 'plat') %>. 
+          Vous devez d'abord supprimer ou déplacer tous les plats avant de supprimer la catégorie.
+        </p>
+        <button class="admin-btn admin-btn-danger" disabled>
+          🚫 Suppression impossible
+        </button>
+      <% else %>
+        <p>Suppression définitive de la catégorie. Cette action est irréversible.</p>
+        <%= link_to admin_category_path(@category), method: :delete, 
+                   class: "admin-btn admin-btn-danger",
+                   confirm: "Êtes-vous sûr de vouloir supprimer définitivement la catégorie '#{@category.name}' ?" do %>
+          🗑️ Supprimer définitivement
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<style>
+  .category-edit-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: start;
+  }
+
+  .form-section {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+
+  .info-section {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+  }
+
+  .category-stats,
+  .category-plats,
+  .danger-zone {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+
+  .category-stats h3,
+  .category-plats h3,
+  .danger-zone h3 {
+    margin: 0 0 20px 0;
+    color: #2c3e50;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .danger-zone {
+    border-left: 4px solid #e74c3c;
+  }
+
+  .danger-zone h3 {
+    color: #e74c3c;
+  }
+
+  .danger-warning {
+    color: #856404;
+    background: #fff3cd;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    font-size: 14px;
+    border: 1px solid #ffeaa7;
+  }
+
+  .category-form {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .form-content {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .form-group label {
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 14px;
+  }
+
+  .form-control {
+    padding: 12px;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.2s;
+    background-color: #fff;
+  }
+
+  .form-control:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+  }
+
+  .form-help {
+    font-size: 12px;
+    color: #6c757d;
+    font-style: italic;
+  }
+
+  .error-message {
+    color: #e74c3c;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 15px;
+    padding-top: 20px;
+    border-top: 1px solid #e9ecef;
+  }
+
+  .btn-lg {
+    padding: 15px 30px;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+
+  .stat-item {
+    text-align: center;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #3498db;
+  }
+
+  .stat-number {
+    font-size: 24px;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 5px;
+  }
+
+  .stat-label {
+    font-size: 12px;
+    color: #6c757d;
+    font-weight: 500;
+  }
+
+  .plats-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .plat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+  }
+
+  .plat-info h4 {
+    margin: 0 0 6px 0;
+    color: #2c3e50;
+    font-size: 14px;
+  }
+
+  .plat-details {
+    display: flex;
+    gap: 15px;
+    font-size: 12px;
+  }
+
+  .plat-price {
+    color: #27ae60;
+    font-weight: 600;
+  }
+
+  .plat-stock {
+    color: #6c757d;
+  }
+
+  .plat-stock.low-stock {
+    color: #e74c3c;
+    font-weight: 600;
+  }
+
+  .plat-status.available {
+    color: #27ae60;
+  }
+
+  .plat-status.unavailable {
+    color: #e74c3c;
+  }
+
+  .plat-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .plats-actions {
+    text-align: center;
+    padding-top: 15px;
+    border-top: 1px solid #e9ecef;
+  }
+
+  .empty-plats {
+    text-align: center;
+    padding: 40px 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 2px dashed #dee2e6;
+  }
+
+  .empty-plats p {
+    margin: 0 0 20px 0;
+    color: #6c757d;
+  }
+
+  @media (max-width: 1024px) {
+    .category-edit-container {
+      grid-template-columns: 1fr;
+      gap: 30px;
+    }
+
+    .info-section {
+      order: -1;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .form-actions {
+      flex-direction: column;
+    }
+
+    .stats-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .plat-item {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .plat-actions {
+      align-self: stretch;
+      justify-content: center;
+    }
+
+    .plat-details {
+      flex-wrap: wrap;
+    }
+
+    .form-section,
+    .category-stats,
+    .category-plats,
+    .danger-zone {
+      padding: 20px;
+    }
+  }
+</style>

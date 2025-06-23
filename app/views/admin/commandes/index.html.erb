@@ -1,0 +1,338 @@
+<div class="admin-page-header">
+  <h1 class="admin-page-title">Gestion des Commandes</h1>
+  <p class="admin-page-subtitle">Toutes les commandes de votre restaurant</p>
+</div>
+
+<!-- Filtres -->
+<div class="filters-bar">
+  <div class="filter-group">
+    <%= link_to admin_commandes_path, class: "filter-btn #{'active' unless params[:status].present?}" do %>
+      Toutes
+    <% end %>
+    
+    <%= link_to admin_commandes_path(status: 'en_attente'), class: "filter-btn #{'active' if params[:status] == 'en_attente'}" do %>
+      En attente
+    <% end %>
+    
+    <%= link_to admin_commandes_path(status: 'confirmee'), class: "filter-btn #{'active' if params[:status] == 'confirmee'}" do %>
+      Confirmées
+    <% end %>
+    
+    <%= link_to admin_commandes_path(status: 'prete'), class: "filter-btn #{'active' if params[:status] == 'prete'}" do %>
+      Prêtes
+    <% end %>
+    
+    <%= link_to admin_commandes_path(status: 'recuperee'), class: "filter-btn #{'active' if params[:status] == 'recuperee'}" do %>
+      Récupérées
+    <% end %>
+  </div>
+  
+  <div class="filter-group">
+    <%= link_to admin_commandes_path(today: 'true'), class: "filter-btn #{'active' if params[:today] == 'true'}" do %>
+      Aujourd'hui seulement
+    <% end %>
+  </div>
+</div>
+
+<!-- Liste des commandes -->
+<div class="commandes-list">
+  <% if @commandes.any? %>
+    <% @commandes.each do |commande| %>
+      <div class="commande-card">
+        <div class="commande-header">
+          <div class="commande-info">
+            <h3>Commande #<%= commande.id %></h3>
+            <span class="commande-status status-<%= commande.statut %>">
+              <%= commande.statut.humanize %>
+            </span>
+          </div>
+          <div class="commande-meta">
+            <div class="commande-date">
+              <%= commande.created_at.strftime('%d/%m/%Y à %H:%M') %>
+            </div>
+            <div class="commande-pickup">
+              🕐 Retrait: <%= commande.formatted_pickup_time %>
+            </div>
+          </div>
+        </div>
+
+        <div class="commande-details">
+          <div class="client-info">
+            <strong><%= commande.client_nom %></strong><br>
+            📞 <%= commande.client_telephone %><br>
+            ✉️ <%= commande.client_email %>
+          </div>
+
+          <div class="order-summary">
+            <div class="order-items">
+              <% commande.order_items.includes(:plat).each do |item| %>
+                <div class="order-item">
+                  <span class="quantity"><%= item.quantite %>x</span>
+                  <span class="item-name"><%= item.plat.nom %></span>
+                  <span class="item-price"><%= (item.quantite * item.prix_unitaire).to_f %>€</span>
+                </div>
+              <% end %>
+            </div>
+            
+            <div class="order-total">
+              <strong>Total: <%= commande.montant_total.to_f %>€</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="commande-actions">
+          <% if commande.statut == 'en_attente' %>
+            <%= link_to change_status_admin_commande_path(commande, status: 'confirmee'), 
+                       data: { turbo_method: :patch }, class: "admin-btn admin-btn-success admin-btn-sm" do %>
+              ✅ Confirmer
+            <% end %>
+          <% elsif commande.statut == 'confirmee' %>
+            <%= link_to change_status_admin_commande_path(commande, status: 'prete'), 
+                       data: { turbo_method: :patch }, class: "admin-btn admin-btn-success admin-btn-sm" do %>
+              🍽️ Marquer prête
+            <% end %>
+          <% elsif commande.statut == 'prete' %>
+            <%= link_to change_status_admin_commande_path(commande, status: 'recuperee'), 
+                       data: { turbo_method: :patch }, class: "admin-btn admin-btn-success admin-btn-sm" do %>
+              ✨ Marquer récupérée
+            <% end %>
+          <% end %>
+          
+          <%= link_to admin_commande_path(commande), class: "admin-btn admin-btn-sm" do %>
+            👁️ Voir détails
+          <% end %>
+          
+          <%= link_to edit_admin_commande_path(commande), class: "admin-btn admin-btn-sm" do %>
+            ✏️ Modifier
+          <% end %>
+        </div>
+
+        <% if commande.notes.present? %>
+          <div class="commande-notes">
+            <strong>Notes:</strong> <%= commande.notes %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="empty-state">
+      <p>Aucune commande trouvée</p>
+      <% if params[:status].present? || params[:today].present? %>
+        <%= link_to "Voir toutes les commandes", admin_commandes_path, class: "admin-btn" %>
+      <% end %>
+    </div>
+  <% end %>
+</div>
+
+<style>
+  .filters-bar {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    flex-wrap: wrap;
+  }
+
+  .filter-group {
+    display: flex;
+    gap: 10px;
+  }
+
+  .filter-btn {
+    padding: 8px 16px;
+    background: #f8f9fa;
+    color: #6c757d;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: all 0.2s;
+    border: 1px solid #dee2e6;
+  }
+
+  .filter-btn:hover,
+  .filter-btn.active {
+    background: #3498db;
+    color: white;
+    border-color: #3498db;
+  }
+
+  .commandes-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .commande-card {
+    background: white;
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: box-shadow 0.2s;
+  }
+
+  .commande-card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  }
+
+  .commande-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+  }
+
+  .commande-info h3 {
+    margin: 0 0 8px 0;
+    color: #2c3e50;
+  }
+
+  .commande-status {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+  }
+
+  .status-en_attente {
+    background: #fff3cd;
+    color: #856404;
+  }
+
+  .status-confirmee {
+    background: #cce5ff;
+    color: #0066cc;
+  }
+
+  .status-prete {
+    background: #d4edda;
+    color: #155724;
+  }
+
+  .status-recuperee {
+    background: #e2e3e5;
+    color: #6c757d;
+  }
+
+  .commande-meta {
+    text-align: right;
+    font-size: 14px;
+    color: #6c757d;
+  }
+
+  .commande-pickup {
+    margin-top: 4px;
+    font-weight: 500;
+    color: #e67e22;
+  }
+
+  .commande-details {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 30px;
+    margin-bottom: 20px;
+  }
+
+  .client-info {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .order-items {
+    margin-bottom: 15px;
+  }
+
+  .order-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #f8f9fa;
+  }
+
+  .order-item:last-child {
+    border-bottom: none;
+  }
+
+  .quantity {
+    font-weight: 500;
+    color: #3498db;
+    min-width: 30px;
+  }
+
+  .item-name {
+    flex: 1;
+    margin-left: 10px;
+  }
+
+  .item-price {
+    font-weight: 500;
+    color: #27ae60;
+  }
+
+  .order-total {
+    padding-top: 10px;
+    border-top: 2px solid #eee;
+    text-align: right;
+    font-size: 16px;
+    color: #27ae60;
+  }
+
+  .commande-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .commande-notes {
+    margin-top: 15px;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 4px;
+    font-size: 14px;
+    border-left: 4px solid #3498db;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    background: white;
+    border-radius: 8px;
+    color: #6c757d;
+  }
+
+  @media (max-width: 768px) {
+    .filters-bar {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .filter-group {
+      justify-content: center;
+    }
+
+    .commande-header {
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .commande-meta {
+      text-align: left;
+    }
+
+    .commande-details {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .commande-actions {
+      justify-content: center;
+    }
+  }
+</style>

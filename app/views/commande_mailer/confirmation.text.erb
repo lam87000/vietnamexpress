@@ -1,0 +1,38 @@
+🍜 RESTAURANT PHO LIMOGES
+========================
+
+Bonjour <%= @commande.client_nom %>,
+
+Nous avons bien reçu et CONFIRMÉ votre commande #<%= @commande.id %>.
+
+📋 DÉTAILS DE VOTRE COMMANDE
+----------------------------
+<% @order_items.each do |item| %>
+<%= item.quantite %>x <%= item.plat.nom %> - <%= (item.prix_unitaire * item.quantite).to_f %>€
+<% end %>
+
+TOTAL: <%= @commande.montant_total.to_f %>€
+
+🕒 INFORMATIONS DE RETRAIT
+--------------------------
+Date et heure: <%= @commande.formatted_pickup_time %>
+
+Adresse: Restaurant Pho Limoges
+         [Adresse du restaurant]
+         87000 Limoges
+
+Téléphone: [Numéro du restaurant]
+
+<% if @commande.notes.present? %>
+📝 NOTES SPÉCIALES
+------------------
+<%= @commande.notes %>
+
+<% end %>
+MERCI POUR VOTRE COMMANDE !
+
+Votre commande sera prête à l'heure indiquée. En cas de retard ou de problème, nous vous contacterons au <%= @commande.client_telephone %>.
+
+---
+Restaurant Pho Limoges - Cuisine vietnamienne authentique
+Pour toute question, contactez-nous au [numéro] ou par email à [email]
