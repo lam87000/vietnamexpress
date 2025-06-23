@@ -1,0 +1,343 @@
+<div class="commande-details">
+  <div class="commande-header">
+    <h1>Commande #<%= @commande.id %></h1>
+    <div class="status-badge status-<%= @commande.statut %>">
+      <%= @commande.statut.humanize %>
+    </div>
+  </div>
+
+  <div class="commande-info">
+    <div class="info-section">
+      <h3>Informations client</h3>
+      <div class="info-grid">
+        <div class="info-item">
+          <strong>Nom:</strong>
+          <%= @commande.client_nom %>
+        </div>
+        <div class="info-item">
+          <strong>Téléphone:</strong>
+          <%= @commande.client_telephone %>
+        </div>
+        <div class="info-item">
+          <strong>Email:</strong>
+          <%= @commande.client_email %>
+        </div>
+        <div class="info-item">
+          <strong>Retrait prévu:</strong>
+          <%= @commande.formatted_pickup_time %>
+        </div>
+      </div>
+      
+      <% if @commande.notes.present? %>
+        <div class="notes">
+          <strong>Notes:</strong>
+          <p><%= @commande.notes %></p>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="order-items">
+      <h3>Détails de la commande</h3>
+      <div class="items-list">
+        <% @order_items.each do |item| %>
+          <div class="item-row">
+            <div class="item-info">
+              <h4><%= item.plat.nom %></h4>
+              <p class="item-description"><%= item.plat.description %></p>
+            </div>
+            <div class="item-quantity">
+              Quantité: <%= item.quantite %>
+            </div>
+            <div class="item-price">
+              <%= item.prix_unitaire.to_f %>€ x <%= item.quantite %> = <%= item.total_price.to_f %>€
+            </div>
+          </div>
+        <% end %>
+      </div>
+      
+      <div class="order-summary">
+        <div class="summary-row">
+          <strong>Total articles: <%= @commande.total_items %></strong>
+        </div>
+        <div class="summary-row total">
+          <strong>Total: <%= @commande.montant_total.to_f %>€</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <%= link_to "Mes commandes", commandes_path, class: "btn btn-secondary" %>
+    <%= link_to "Nouvelle commande", new_commande_path, class: "btn btn-primary" %>
+    <% if @commande.can_be_cancelled? %>
+      <%= link_to "Modifier", edit_commande_path(@commande), class: "btn btn-warning" %>
+      <%= link_to "Annuler la commande", @commande, method: :delete, 
+                  confirm: "Êtes-vous sûr de vouloir annuler cette commande ?", 
+                  class: "btn btn-danger" %>
+    <% end %>
+  </div>
+</div>
+
+<style>
+.commande-details {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.commande-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #d4572a;
+}
+
+.commande-header h1 {
+  margin: 0;
+  color: #333;
+}
+
+.status-badge {
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.status-en_attente {
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeaa7;
+}
+
+.status-confirmee {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #a3d9a4;
+}
+
+.status-prete {
+  background-color: #d1ecf1;
+  color: #0c5460;
+  border: 1px solid #b8daff;
+}
+
+.status-recuperee {
+  background-color: #e2e3e5;
+  color: #495057;
+  border: 1px solid #d6d8db;
+}
+
+.status-annulee {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.commande-info {
+  display: grid;
+  gap: 30px;
+  margin-bottom: 30px;
+}
+
+.info-section h3, .order-items h3 {
+  color: #d4572a;
+  margin-bottom: 20px;
+  font-size: 18px;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.info-item {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  border-left: 4px solid #d4572a;
+}
+
+.info-item strong {
+  display: block;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.notes {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  border-left: 4px solid #d4572a;
+}
+
+.notes strong {
+  color: #333;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.notes p {
+  margin: 0;
+  color: #666;
+}
+
+.items-list {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.item-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 20px;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.item-row:last-child {
+  border-bottom: none;
+}
+
+.item-info h4 {
+  margin: 0 0 5px 0;
+  color: #333;
+}
+
+.item-description {
+  margin: 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.item-quantity {
+  text-align: center;
+  font-weight: 500;
+  color: #666;
+}
+
+.item-price {
+  text-align: right;
+  font-weight: bold;
+  color: #d4572a;
+}
+
+.order-summary {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  color: #666;
+}
+
+.summary-row:last-child {
+  margin-bottom: 0;
+}
+
+.summary-row.total {
+  font-size: 18px;
+  color: #333;
+  padding-top: 10px;
+  border-top: 2px solid #d4572a;
+}
+
+.actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+
+.btn-primary {
+  background-color: #d4572a;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #b8481f;
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+  transform: translateY(-1px);
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn-danger:hover {
+  background-color: #c82333;
+  transform: translateY(-1px);
+}
+
+.btn-warning {
+  background-color: #ffc107;
+  color: #212529;
+}
+
+.btn-warning:hover {
+  background-color: #e0a800;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+  .commande-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .item-row {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    text-align: left;
+  }
+  
+  .item-quantity, .item-price {
+    text-align: left;
+  }
+  
+  .actions {
+    flex-direction: column;
+  }
+}
+</style> 

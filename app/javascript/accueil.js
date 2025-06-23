@@ -1,6 +1,6 @@
 // JavaScript pour la page d'accueil du restaurant Vietnam Express
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('turbo:load', function() {
     
     // Navigation fluide pour les liens d'ancrage
     const smoothScrollLinks = document.querySelectorAll('a[href^="#"]');

@@ -31,30 +31,41 @@
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
       <div class="container">
-        <a class="navbar-brand" href="#">
+        <%= link_to root_path, class: "navbar-brand" do %>
           <i class="fas fa-utensils me-2"></i>
           <span class="brand-text">Vietnam Express</span>
-        </a>
+        <% end %>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto">
             <li class="nav-item">
-              <a class="nav-link" href="#accueil">Accueil</a>
+              <%= link_to "Accueil", root_path, class: "nav-link" %>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#specialites">Spécialités</a>
+              <%= link_to "Notre Carte", plats_path, class: "nav-link" %>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#menu">Menu</a>
+              <%= link_to "Commander", new_commande_path, class: "nav-link" %>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#chefs">Nos Chefs</a>
+              <%= link_to "Mes Commandes", commandes_path, class: "nav-link" %>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#contact">Contact</a>
+              <%= link_to "Contact", contact_path, class: "nav-link" %>
             </li>
+            
+            <!-- Indicateur de panier -->
+            <% if session[:cart]&.any? %>
+              <li class="nav-item position-relative">
+                <a href="#cart-section" class="nav-link cart-indicator" onclick="scrollToCart(event)">
+                  <i class="fas fa-shopping-cart"></i>
+                  <span class="cart-count"><%= session[:cart].values.sum %></span>
+                </a>
+              </li>
+            <% end %>
+            
             <li class="nav-item">
               <a class="nav-link btn btn-primary ms-2 px-3" href="tel:0695728639">
                 <i class="fas fa-phone me-1"></i>Réserver
@@ -140,50 +151,162 @@
       <i class="fas fa-arrow-up"></i>
     </button>
 
+    <!-- Styles pour la navbar et l'indicateur de panier -->
+    <style>
+      /* Navbar styles */
+      .navbar {
+        background: rgba(26, 26, 26, 0.95) !important;
+        backdrop-filter: blur(10px);
+        padding: 1rem 0;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      }
+      
+      .navbar-brand {
+        font-size: 1.5rem !important;
+        font-weight: 700 !important;
+        color: white !important;
+      }
+      
+      .brand-text {
+        color: #d4572a !important;
+      }
+      
+      .nav-link {
+        color: white !important;
+        font-weight: 500 !important;
+        font-size: 1.1rem !important;
+        padding: 0.8rem 1rem !important;
+        margin: 0 0.2rem !important;
+        border-radius: 6px !important;
+        transition: all 0.3s ease !important;
+      }
+      
+      .nav-link:hover {
+        color: #d4572a !important;
+        background: rgba(212, 87, 42, 0.1) !important;
+      }
+      
+      /* Padding pour éviter que le contenu passe sous la navbar fixe */
+      main {
+        padding-top: 100px !important;
+      }
+      
+      /* Exception pour la page d'accueil */
+      .home-page main {
+        padding-top: 0 !important;
+      }
+      
+      .cart-indicator {
+        position: relative;
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        min-width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: rgba(212, 87, 42, 0.1);
+        color: #d4572a !important;
+      }
+      
+      .cart-indicator:hover {
+        background: rgba(212, 87, 42, 0.2);
+        color: #d4572a !important;
+      }
+      
+      .cart-count {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background: #d4572a;
+        color: white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: bold;
+        animation: pulse 2s infinite;
+      }
+      
+      @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+      }
+    </style>
+
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <!-- AOS Animation JS -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-      AOS.init({
-        duration: 1000,
-        once: true
-      });
-      
-      // Navbar scroll effect
-      window.addEventListener('scroll', function() {
+      // Fonction d'initialisation qui se relance avec Turbo
+      function initializeApp() {
+        // AOS Animation
+        if (typeof AOS !== 'undefined') {
+          AOS.init({
+            duration: 1000,
+            once: true
+          });
+        }
+        
+        // Navbar scroll effect
         const navbar = document.querySelector('.navbar');
-        if (window.scrollY > 50) {
-          navbar.classList.add('navbar-scrolled');
-        } else {
-          navbar.classList.remove('navbar-scrolled');
+        if (navbar) {
+          window.addEventListener('scroll', function() {
+            if (window.scrollY > 50) {
+              navbar.classList.add('navbar-scrolled');
+            } else {
+              navbar.classList.remove('navbar-scrolled');
+            }
+          });
         }
-      });
-      
-      // Scroll to top button
-      const scrollBtn = document.getElementById('scrollToTop');
-      window.addEventListener('scroll', function() {
-        if (window.scrollY > 300) {
-          scrollBtn.style.display = 'block';
-        } else {
-          scrollBtn.style.display = 'none';
+        
+        // Scroll to top button
+        const scrollBtn = document.getElementById('scrollToTop');
+        if (scrollBtn) {
+          window.addEventListener('scroll', function() {
+            if (window.scrollY > 300) {
+              scrollBtn.style.display = 'block';
+            } else {
+              scrollBtn.style.display = 'none';
+            }
+          });
+          
+          scrollBtn.addEventListener('click', function() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          });
         }
-      });
-      
-      scrollBtn.addEventListener('click', function() {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      });
-      
-      // Smooth scrolling for navigation links
-      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-          e.preventDefault();
-          const target = document.querySelector(this.getAttribute('href'));
-          if (target) {
-            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }
+        
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+          anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+              target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+          });
         });
-      });
+      }
+      
+      // Fonction pour scroll vers le panier (globale)
+      function scrollToCart(event) {
+        event.preventDefault();
+        const cartSection = document.getElementById('cart-section');
+        if (cartSection) {
+          cartSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+          // Si on n'est pas sur la page de commande, rediriger
+          window.location.href = '/commandes/new#cart-section';
+        }
+      }
+      
+      // Initialiser au chargement de la page et à chaque navigation Turbo
+      document.addEventListener('DOMContentLoaded', initializeApp);
+      document.addEventListener('turbo:load', initializeApp);
     </script>
   </body>
 </html>
