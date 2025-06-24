@@ -1,6 +1,6 @@
 class PageController < ApplicationController
   def home
-    # Méthode pour la page d'accueil
+    @categories = Category.includes(:plats).joins(:plats).where(plats: { available: true }).distinct.order(:id)
   end
 
   def contact

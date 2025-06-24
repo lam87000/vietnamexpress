@@ -330,5 +330,10 @@
       document.addEventListener('DOMContentLoaded', initializeApp);
       document.addEventListener('turbo:load', initializeApp);
     </script>
+    
+    <!-- Lazy Loading Script -->
+    <script>
+      <%= File.read(Rails.root.join('app/assets/javascripts/lazy_loading.js')).html_safe %>
+    </script>
   </body>
 </html>

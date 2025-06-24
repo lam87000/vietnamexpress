@@ -9,7 +9,7 @@ class CommandesController < ApplicationController
   
   def new
     @commande = Commande.new
-    @categories = Category.includes(:plats).joins(:plats).where(plats: { available: true }).distinct
+    @categories = Category.includes(:plats).joins(:plats).where(plats: { available: true }).distinct.order(:id)
     @cart_items = session[:cart] || {}
     @total = calculate_cart_total
   end
@@ -25,14 +25,14 @@ class CommandesController < ApplicationController
         redirect_to @commande, notice: 'Votre commande a été enregistrée avec succès!'
       else
         flash.now[:alert] = result.error
-        @categories = Category.includes(:plats).joins(:plats).where(plats: { available: true }).distinct
+        @categories = Category.includes(:plats).joins(:plats).where(plats: { available: true }).distinct.order(:id)
         @cart_items = session[:cart]
         @total = calculate_cart_total
         render :new
       end
     else
       flash.now[:alert] = "Votre panier est vide. Ajoutez des plats avant de confirmer votre commande."
-      @categories = Category.includes(:plats).joins(:plats).where(plats: { available: true }).distinct
+      @categories = Category.includes(:plats).joins(:plats).where(plats: { available: true }).distinct.order(:id)
       @cart_items = session[:cart] || {}
       @total = calculate_cart_total
       render :new

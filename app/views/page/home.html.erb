@@ -157,193 +157,45 @@
     
     <div class="menu-tabs" data-aos="fade-up" data-aos-delay="200">
       <ul class="nav nav-pills justify-content-center mb-5" id="menuTabs" role="tablist">
-        <li class="nav-item" role="presentation">
-          <button class="nav-link active" id="entrees-tab" data-bs-toggle="pill" data-bs-target="#entrees" type="button" role="tab">
-            <i class="fas fa-utensils me-2"></i>Entrées
-          </button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button class="nav-link" id="soupes-tab" data-bs-toggle="pill" data-bs-target="#soupes" type="button" role="tab">
-            <i class="fas fa-bowl-hot me-2"></i>Soupes
-          </button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button class="nav-link" id="plats-tab" data-bs-toggle="pill" data-bs-target="#plats" type="button" role="tab">
-            <i class="fas fa-plate-wheat me-2"></i>Plats
-          </button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button class="nav-link" id="desserts-tab" data-bs-toggle="pill" data-bs-target="#desserts" type="button" role="tab">
-            <i class="fas fa-ice-cream me-2"></i>Desserts
-          </button>
-        </li>
+        <% @categories.each_with_index do |category, index| %>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link <%= 'active' if index == 0 %>" id="<%= category.name.downcase.gsub(' ', '-') %>-tab" data-bs-toggle="pill" data-bs-target="#<%= category.name.downcase.gsub(' ', '-') %>" type="button" role="tab">
+              <% if category.name == "Entrées" %>
+                <i class="fas fa-utensils me-2"></i>
+              <% elsif category.name == "Plats en soupe" %>
+                <i class="fas fa-bowl-hot me-2"></i>
+              <% elsif category.name == "Plats" %>
+                <i class="fas fa-plate-wheat me-2"></i>
+              <% elsif category.name == "Garnitures au choix" %>
+                <i class="fas fa-leaf me-2"></i>
+              <% else %>
+                <i class="fas fa-ice-cream me-2"></i>
+              <% end %>
+              <%= category.name %>
+            </button>
+          </li>
+        <% end %>
       </ul>
     </div>
     
     <div class="tab-content" id="menuTabsContent">
-      <div class="tab-pane fade show active" id="entrees" role="tabpanel">
-        <div class="row g-4">
-          <div class="col-md-6">
-            <div class="menu-item" data-aos="fade-right">
-              <div class="menu-item-info">
-                <h5 class="menu-item-name">Nems Croustillants</h5>
-                <p class="menu-item-description">Rouleaux de printemps dorés, farcis aux légumes et viandes, sauce nuoc-mam</p>
+      <% @categories.each_with_index do |category, category_index| %>
+        <div class="tab-pane fade <%= 'show active' if category_index == 0 %>" id="<%= category.name.downcase.gsub(' ', '-') %>" role="tabpanel">
+          <div class="row g-4">
+            <% category.plats.available.each_with_index do |plat, plat_index| %>
+              <div class="col-md-6">
+                <div class="menu-item" data-aos="<%= plat_index.even? ? 'fade-right' : 'fade-left' %>">
+                  <div class="menu-item-info">
+                    <h5 class="menu-item-name"><%= plat.nom %></h5>
+                    <p class="menu-item-description"><%= plat.description %></p>
+                  </div>
+                  <div class="menu-item-price"><%= plat.formatted_price %></div>
+                </div>
               </div>
-              <div class="menu-item-price">8,90€</div>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="menu-item" data-aos="fade-left">
-              <div class="menu-item-info">
-                <h5 class="menu-item-name">Rouleaux de Printemps</h5>
-                <p class="menu-item-description">Rouleaux frais aux crevettes, porc, légumes et herbes aromatiques</p>
-              </div>
-              <div class="menu-item-price">9,90€</div>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="menu-item" data-aos="fade-right">
-              <div class="menu-item-info">
-                <h5 class="menu-item-name">Salade de Bœuf Thaï</h5>
-                <p class="menu-item-description">Salade de bœuf mariné aux herbes fraîches et sauce pimentée</p>
-              </div>
-              <div class="menu-item-price">12,90€</div>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="menu-item" data-aos="fade-left">
-              <div class="menu-item-info">
-                <h5 class="menu-item-name">Beignets de Crevettes</h5>
-                <p class="menu-item-description">Crevettes enrobées de pâte croustillante, sauce aigre-douce</p>
-              </div>
-              <div class="menu-item-price">11,90€</div>
-            </div>
+            <% end %>
           </div>
         </div>
-      </div>
-      
-      <div class="tab-pane fade" id="soupes" role="tabpanel">
-        <div class="row g-4">
-          <div class="col-md-6">
-            <div class="menu-item" data-aos="fade-right">
-              <div class="menu-item-info">
-                <h5 class="menu-item-name">Pho Bo <span class="badge bg-warning text-dark ms-2">★</span></h5>
-                <p class="menu-item-description">Soupe traditionnelle au bœuf, nouilles de riz et bouillon parfumé</p>
-              </div>
-              <div class="menu-item-price">14,90€</div>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="menu-item" data-aos="fade-left">
-              <div class="menu-item-info">
-                <h5 class="menu-item-name">Pho Ga</h5>
-                <p class="menu-item-description">Soupe au poulet, nouilles de riz et bouillon de volaille</p>
-              </div>
-              <div class="menu-item-price">13,90€</div>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="menu-item" data-aos="fade-right">
-              <div class="menu-item-info">
-                <h5 class="menu-item-name">Soupe Won-Ton</h5>
-                <p class="menu-item-description">Raviolis de porc dans un bouillon parfumé aux légumes</p>
-              </div>
-              <div class="menu-item-price">12,90€</div>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="menu-item" data-aos="fade-left">
-              <div class="menu-item-info">
-                <h5 class="menu-item-name">Soupe de Vermicelles</h5>
-                <p class="menu-item-description">Vermicelles de riz dans un bouillon aux fruits de mer</p>
-              </div>
-              <div class="menu-item-price">15,90€</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <div class="tab-pane fade" id="plats" role="tabpanel">
-        <div class="row g-4">
-          <div class="col-md-6">
-            <div class="menu-item" data-aos="fade-right">
-              <div class="menu-item-info">
-                <h5 class="menu-item-name">Bun Bo Parfumé <span class="badge bg-success ms-2">♥</span></h5>
-                <p class="menu-item-description">Vermicelles de riz au bœuf sauté, légumes croquants et herbes</p>
-              </div>
-              <div class="menu-item-price">13,90€</div>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="menu-item" data-aos="fade-left">
-              <div class="menu-item-info">
-                <h5 class="menu-item-name">Porc au Caramel</h5>
-                <p class="menu-item-description">Porc mijoté au caramel et sauce soja, riz jasmin</p>
-              </div>
-              <div class="menu-item-price">16,90€</div>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="menu-item" data-aos="fade-right">
-              <div class="menu-item-info">
-                <h5 class="menu-item-name">Curry de Poulet</h5>
-                <p class="menu-item-description">Poulet au curry rouge, lait de coco et légumes, riz parfumé</p>
-              </div>
-              <div class="menu-item-price">15,90€</div>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="menu-item" data-aos="fade-left">
-              <div class="menu-item-info">
-                <h5 class="menu-item-name">Crevettes Sautées</h5>
-                <p class="menu-item-description">Crevettes sautées à l'ail et au gingembre, légumes croquants</p>
-              </div>
-              <div class="menu-item-price">18,90€</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <div class="tab-pane fade" id="desserts" role="tabpanel">
-        <div class="row g-4">
-          <div class="col-md-6">
-            <div class="menu-item" data-aos="fade-right">
-              <div class="menu-item-info">
-                <h5 class="menu-item-name">Che Ba Mau</h5>
-                <p class="menu-item-description">Dessert traditionnel aux haricots rouges et lait de coco</p>
-              </div>
-              <div class="menu-item-price">6,90€</div>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="menu-item" data-aos="fade-left">
-              <div class="menu-item-info">
-                <h5 class="menu-item-name">Flan Coco</h5>
-                <p class="menu-item-description">Flan onctueux au lait de coco et caramel</p>
-              </div>
-              <div class="menu-item-price">5,90€</div>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="menu-item" data-aos="fade-right">
-              <div class="menu-item-info">
-                <h5 class="menu-item-name">Glace au Sésame Noir</h5>
-                <p class="menu-item-description">Glace artisanale parfumée au sésame noir</p>
-              </div>
-              <div class="menu-item-price">4,90€</div>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="menu-item" data-aos="fade-left">
-              <div class="menu-item-info">
-                <h5 class="menu-item-name">Fruits Exotiques</h5>
-                <p class="menu-item-description">Salade de fruits tropicaux frais de saison</p>
-              </div>
-              <div class="menu-item-price">7,90€</div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <% end %>
     </div>
   </div>
 </section>

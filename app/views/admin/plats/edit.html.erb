@@ -86,11 +86,15 @@
         <div class="form-group full-width">
           <%= f.label :image_url, "URL de l'image (optionnel)" %>
           <div class="image-input-group">
-            <%= f.url_field :image_url, class: "form-control" %>
-            <% if @plat.image_url.present? %>
+            <%= f.text_field :image_url, class: "form-control" %>
+            <% if @plat.has_image? %>
               <div class="current-image">
-                <img src="<%= @plat.image_url %>" alt="Image actuelle" class="image-preview">
-                <span class="image-info">Image actuelle</span>
+                <% if @plat.is_local_image? %>
+                  <%= image_tag "admin/#{@plat.image_url}", alt: "Image actuelle", class: "image-preview" %>
+                <% else %>
+                  <img src="<%= @plat.image_url %>" alt="Image actuelle" class="image-preview">
+                <% end %>
+                <span class="image-info">Image actuelle (version admin optimisée)</span>
               </div>
             <% end %>
           </div>

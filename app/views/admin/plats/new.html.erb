@@ -70,7 +70,7 @@
 
         <div class="form-group full-width">
           <%= f.label :image_url, "URL de l'image (optionnel)" %>
-          <%= f.url_field :image_url, class: "form-control", placeholder: "https://exemple.com/image.jpg" %>
+          <%= f.text_field :image_url, class: "form-control", placeholder: "https://exemple.com/image.jpg ou nom-fichier.jpg" %>
           <small class="form-help">Lien vers une image du plat (optionnel)</small>
           <% if @plat.errors[:image_url].any? %>
             <div class="error-message">

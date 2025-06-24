@@ -18,8 +18,12 @@
         <div class="plats-grid">
           <% category.plats.available.each do |plat| %>
             <div class="plat-card">
-              <% if plat.image_url.present? %>
-                <img src="<%= plat.image_url %>" alt="<%= plat.nom %>" class="plat-image">
+              <% if plat.has_image? %>
+                <% if plat.is_local_image? %>
+                  <%= image_tag plat.image_url, alt: plat.nom, class: "plat-image", loading: 'lazy' %>
+                <% else %>
+                  <img src="<%= plat.image_url %>" alt="<%= plat.nom %>" class="plat-image" loading="lazy">
+                <% end %>
               <% end %>
               <div class="plat-info">
                 <h3><%= plat.nom %></h3>

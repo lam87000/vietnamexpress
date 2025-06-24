@@ -18,4 +18,35 @@ class Plat < ApplicationRecord
   def formatted_price
     "#{prix.to_f}€"
   end
+  
+  def image_path
+    return nil if image_url.blank?
+    
+    # Si l'URL commence par http/https, c'est une URL externe
+    if image_url.match?(/^https?:\/\//)
+      image_url
+    else
+      # Pour les images locales, retourner juste le nom du fichier
+      # Rails s'occupera du chemin dans les vues
+      image_url
+    end
+  end
+  
+  def has_image?
+    image_url.present?
+  end
+  
+  def is_local_image?
+    image_url.present? && !image_url.match?(/^https?:\/\//)
+  end
+  
+  private
+  
+  def asset_path(filename)
+    # Utiliser ActionView pour les assets
+    ActionController::Base.helpers.asset_path(filename)
+  rescue
+    # Fallback si les helpers ne sont pas disponibles
+    "/assets/#{filename}"
+  end
 end 

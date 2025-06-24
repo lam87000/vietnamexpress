@@ -9,8 +9,8 @@
   </div>
 
   <div class="menu-content">
-    <% @categories.each do |category| %>
-      <div class="category-section" id="category-<%= category.id %>">
+    <% @categories.each_with_index do |category, index| %>
+      <div class="category-section category-<%= category.name.downcase.gsub(/\s+/, '-') %>" id="category-<%= category.id %>">
         <div class="category-header">
           <h2><%= category.name %></h2>
           <% if category.description.present? %>
@@ -21,9 +21,20 @@
         <div class="plats-grid">
           <% category.plats.available.each do |plat| %>
             <div class="plat-card">
-              <% if plat.image_url.present? %>
+              <% if plat.has_image? %>
                 <div class="plat-image-container">
-                  <img src="<%= plat.image_url %>" alt="<%= plat.nom %>" class="plat-image">
+                  <% 
+                    # Déterminer si c'est une image critique (Entrées) ou lazy
+                    is_critical = category.name == 'Entrées'
+                    image_class = "plat-image"
+                    image_class += " critical" if is_critical
+                  %>
+                  
+                  <% if plat.is_local_image? %>
+                    <%= image_tag plat.image_url, alt: plat.nom, class: image_class, loading: 'lazy' %>
+                  <% else %>
+                    <img src="<%= plat.image_url %>" alt="<%= plat.nom %>" class="<%= image_class %>" loading="lazy">
+                  <% end %>
                   <div class="image-overlay">
                     <%= link_to "Voir détails", plat, class: "btn btn-sm btn-light" %>
                   </div>

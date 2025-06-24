@@ -14,8 +14,8 @@
   <!-- Image et informations principales -->
   <div class="plat-main-section">
     <div class="plat-image-section">
-      <% if @plat.image_url.present? %>
-        <img src="<%= @plat.image_url %>" alt="<%= @plat.nom %>" class="plat-main-image">
+      <% if @plat.has_image? %>
+        <img src="<%= @plat.image_path %>" alt="<%= @plat.nom %>" class="plat-main-image">
       <% else %>
         <div class="plat-placeholder">
           <span class="placeholder-icon">🍽️</span>

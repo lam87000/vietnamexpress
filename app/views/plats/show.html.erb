@@ -7,8 +7,12 @@
 
   <div class="plat-main">
     <div class="plat-image-section">
-      <% if @plat.image_url.present? %>
-        <img src="<%= @plat.image_url %>" alt="<%= @plat.nom %>" class="plat-image">
+      <% if @plat.has_image? %>
+        <% if @plat.is_local_image? %>
+          <%= image_tag @plat.image_url, alt: @plat.nom, class: "plat-image" %>
+        <% else %>
+          <img src="<%= @plat.image_url %>" alt="<%= @plat.nom %>" class="plat-image">
+        <% end %>
       <% else %>
         <div class="no-image">
           <span>📷</span>
@@ -79,8 +83,12 @@
     <div class="related-plats">
       <% @plat.category.plats.available.where.not(id: @plat.id).limit(3).each do |related_plat| %>
         <div class="related-plat-card">
-          <% if related_plat.image_url.present? %>
-            <img src="<%= related_plat.image_url %>" alt="<%= related_plat.nom %>" class="related-image">
+          <% if related_plat.has_image? %>
+            <% if related_plat.is_local_image? %>
+              <%= image_tag related_plat.image_url, alt: related_plat.nom, class: "related-image" %>
+            <% else %>
+              <img src="<%= related_plat.image_url %>" alt="<%= related_plat.nom %>" class="related-image">
+            <% end %>
           <% end %>
           <div class="related-content">
             <h4><%= link_to related_plat.nom, related_plat %></h4>

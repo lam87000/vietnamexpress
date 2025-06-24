@@ -7,23 +7,6 @@
   </div>
 </div>
 
-<!-- Filtres par catégorie -->
-<div class="category-filters">
-  <h3>Filtrer par catégorie</h3>
-  <div class="filter-buttons">
-    <%= link_to admin_plats_path, class: "filter-btn #{'active' unless params[:category_id].present?}" do %>
-      Tous les plats (<%= Plat.count %>)
-    <% end %>
-    
-    <% @categories.each do |category| %>
-      <%= link_to admin_plats_path(category_id: category.id), 
-                 class: "filter-btn #{'active' if params[:category_id] == category.id.to_s}" do %>
-        <%= category.name %> (<%= category.plats.count %>)
-      <% end %>
-    <% end %>
-  </div>
-</div>
-
 <!-- Alertes stock faible -->
 <% if @low_stock_plats.any? %>
   <div class="stock-alert">
@@ -39,65 +22,78 @@
   </div>
 <% end %>
 
-<!-- Liste des plats -->
-<div class="plats-grid">
-  <% @plats.each do |plat| %>
-    <div class="plat-card">
-      <% if plat.image_url.present? %>
-        <div class="plat-image">
-          <img src="<%= plat.image_url %>" alt="<%= plat.nom %>">
-        </div>
-      <% else %>
-        <div class="plat-image placeholder">
-          🍽️
-        </div>
-      <% end %>
+<!-- Menu par catégories -->
+<div class="admin-menu">
+  <% @categories.each_with_index do |category, index| %>
+    <div class="admin-category-section">
+      <div class="admin-category-header">
+        <h2><%= category.name %></h2>
+        <% if category.description.present? %>
+          <p class="category-description"><%= category.description %></p>
+        <% end %>
+      </div>
+      
+      <div class="admin-plats-grid">
+        <% category.plats.each do |plat| %>
+          <div class="admin-plat-card">
+                         <% if plat.has_image? %>
+               <div class="admin-plat-image">
+                 <% if plat.is_local_image? %>
+                   <%= image_tag "admin/#{plat.image_url}", alt: plat.nom, loading: 'lazy' %>
+                 <% else %>
+                   <img src="<%= plat.image_url %>" alt="<%= plat.nom %>" loading="lazy">
+                 <% end %>
+               </div>
+             <% else %>
+               <div class="admin-plat-image placeholder">
+                 🍽️
+               </div>
+             <% end %>
 
-      <div class="plat-content">
-        <div class="plat-header">
-          <h3><%= plat.nom %></h3>
-          <span class="plat-category"><%= plat.category.name %></span>
-        </div>
+            <div class="admin-plat-content">
+              <div class="admin-plat-header">
+                <h3><%= plat.nom %></h3>
+                <div class="admin-plat-price"><%= plat.formatted_price %></div>
+              </div>
 
-        <div class="plat-price">
-          <%= plat.formatted_price %>
-        </div>
+              <div class="admin-plat-description">
+                <%= truncate(plat.description, length: 100) %>
+              </div>
 
-        <div class="plat-description">
-          <%= truncate(plat.description, length: 100) %>
-        </div>
+              <div class="admin-plat-stock">
+                <span class="stock-label">Stock:</span>
+                <span class="stock-value <%= 'low-stock' if plat.stock_quantity <= 5 %>">
+                  <%= plat.stock_quantity %> unités
+                </span>
+                <span class="availability-status <%= plat.available? ? 'available' : 'unavailable' %>">
+                  <%= plat.available? ? '✅ Disponible' : '❌ Indisponible' %>
+                </span>
+              </div>
 
-        <div class="plat-stock">
-          <span class="stock-label">Stock:</span>
-          <span class="stock-value <%= 'low-stock' if plat.stock_quantity <= 5 %>">
-            <%= plat.stock_quantity %> unités
-          </span>
-          <span class="availability-status <%= plat.available? ? 'available' : 'unavailable' %>">
-            <%= plat.available? ? '✅ Disponible' : '❌ Indisponible' %>
-          </span>
-        </div>
-
-        <div class="plat-actions">
-          <%= link_to admin_plat_path(plat), class: "admin-btn admin-btn-sm" do %>
-            👁️ Voir
-          <% end %>
-          
-          <%= link_to edit_admin_plat_path(plat), class: "admin-btn admin-btn-sm" do %>
-            ✏️ Modifier
-          <% end %>
-          
-          <%= link_to admin_plat_path(plat), data: { turbo_method: :delete }, 
-                     class: "admin-btn admin-btn-danger admin-btn-sm",
-                     confirm: "Êtes-vous sûr de vouloir supprimer ce plat ?" do %>
-            🗑️ Supprimer
-          <% end %>
-        </div>
+              <div class="admin-plat-actions">
+                <%= link_to admin_plat_path(plat), class: "admin-btn admin-btn-sm" do %>
+                  👁️ Voir
+                <% end %>
+                
+                <%= link_to edit_admin_plat_path(plat), class: "admin-btn admin-btn-sm" do %>
+                  ✏️ Modifier
+                <% end %>
+                
+                <%= link_to admin_plat_path(plat), data: { turbo_method: :delete }, 
+                           class: "admin-btn admin-btn-danger admin-btn-sm",
+                           confirm: "Êtes-vous sûr de vouloir supprimer ce plat ?" do %>
+                  🗑️ Supprimer
+                <% end %>
+              </div>
+            </div>
+          </div>
+        <% end %>
       </div>
     </div>
   <% end %>
 </div>
 
-<% if @plats.empty? %>
+<% if @categories.empty? || @categories.all? { |c| c.plats.empty? } %>
   <div class="empty-state">
     <h3>Aucun plat enregistré</h3>
     <p>Commencez par ajouter des plats à votre menu</p>
@@ -140,13 +136,40 @@
     font-weight: 500;
   }
 
-  .plats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 25px;
+  .admin-menu {
+    max-width: 1200px;
+    margin: 0 auto;
   }
 
-  .plat-card {
+  .admin-category-section {
+    margin-bottom: 40px;
+  }
+
+  .admin-category-header {
+    margin-bottom: 20px;
+  }
+
+  .admin-category-header h2 {
+    color: #d4572a;
+    border-bottom: 2px solid #d4572a;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    font-size: 24px;
+  }
+
+  .category-description {
+    color: #666;
+    font-style: italic;
+    margin: 0;
+  }
+
+  .admin-plats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+  }
+
+  .admin-plat-card {
     background: white;
     border-radius: 12px;
     overflow: hidden;
@@ -154,24 +177,24 @@
     transition: transform 0.2s, box-shadow 0.2s;
   }
 
-  .plat-card:hover {
+  .admin-plat-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 15px rgba(0,0,0,0.15);
   }
 
-  .plat-image {
+  .admin-plat-image {
     height: 200px;
     overflow: hidden;
     position: relative;
   }
 
-  .plat-image img {
+  .admin-plat-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
 
-  .plat-image.placeholder {
+  .admin-plat-image.placeholder {
     background: #f8f9fa;
     display: flex;
     align-items: center;
@@ -180,11 +203,11 @@
     color: #dee2e6;
   }
 
-  .plat-content {
-    padding: 20px;
+  .admin-plat-content {
+    padding: 15px;
   }
 
-  .plat-header {
+  .admin-plat-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
@@ -192,65 +215,56 @@
     gap: 10px;
   }
 
-  .plat-header h3 {
+  .admin-plat-header h3 {
     margin: 0;
     color: #2c3e50;
-    font-size: 18px;
+    font-size: 16px;
     flex: 1;
   }
 
-  .plat-category {
-    background: #3498db;
-    color: white;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 500;
+  .admin-plat-price {
+    font-size: 16px;
+    font-weight: bold;
+    color: #d4572a;
     white-space: nowrap;
   }
 
-  .plat-price {
-    font-size: 24px;
-    font-weight: bold;
-    color: #27ae60;
-    margin-bottom: 15px;
-  }
-
-  .plat-description {
-    color: #6c757d;
-    line-height: 1.5;
-    margin-bottom: 15px;
+  .admin-plat-description {
+    color: #666;
     font-size: 14px;
+    margin-bottom: 10px;
+    line-height: 1.4;
   }
 
-  .plat-stock {
+  .admin-plat-stock {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 20px;
-    padding: 12px;
-    background: #f8f9fa;
-    border-radius: 6px;
+    gap: 8px;
+    margin-bottom: 15px;
+    font-size: 12px;
+    flex-wrap: wrap;
   }
 
   .stock-label {
-    font-weight: 600;
-    color: #6c757d;
-    font-size: 12px;
+    font-weight: 500;
+    color: #666;
   }
 
   .stock-value {
-    font-weight: 600;
-    color: #2c3e50;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: #e8f5e8;
+    color: #2d5a2d;
+    font-weight: 500;
   }
 
   .stock-value.low-stock {
-    color: #e74c3c;
+    background: #ffeaa7;
+    color: #856404;
   }
 
   .availability-status {
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 500;
   }
 
@@ -262,10 +276,16 @@
     color: #e74c3c;
   }
 
-  .plat-actions {
+  .admin-plat-actions {
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
+  }
+
+  .admin-btn-sm {
+    padding: 6px 10px;
+    font-size: 12px;
+    border-radius: 4px;
   }
 
   .empty-state {
@@ -277,97 +297,22 @@
   }
 
   .empty-state h3 {
-    margin: 0 0 10px 0;
-    color: #6c757d;
+    color: #666;
+    margin-bottom: 10px;
   }
 
   .empty-state p {
-    margin: 0 0 30px 0;
-    color: #6c757d;
-  }
-
-  /* Styles pour les filtres de catégorie */
-  .category-filters {
-    background: white;
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 30px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  }
-
-  .category-filters h3 {
-    margin: 0 0 15px 0;
-    color: #2c3e50;
-    font-size: 16px;
-    font-weight: 600;
-  }
-
-  .filter-buttons {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-
-  .filter-btn {
-    padding: 8px 16px;
-    background: #f8f9fa;
-    color: #6c757d;
-    text-decoration: none;
-    border-radius: 20px;
-    font-size: 14px;
-    font-weight: 500;
-    transition: all 0.2s;
-    border: 2px solid transparent;
-  }
-
-  .filter-btn:hover,
-  .filter-btn.active {
-    background: #3498db;
-    color: white;
-    border-color: #3498db;
-  }
-
-  .filter-btn.active {
-    font-weight: 600;
+    color: #888;
+    margin-bottom: 20px;
   }
 
   @media (max-width: 768px) {
-    .plats-grid {
+    .admin-plats-grid {
       grid-template-columns: 1fr;
     }
-
-    .plat-header {
-      flex-direction: column;
-      align-items: stretch;
-      gap: 5px;
-    }
-
-    .plat-category {
-      align-self: flex-start;
-    }
-
-    .plat-stock {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 5px;
-    }
-
-    .plat-actions {
+    
+    .admin-plat-actions {
       justify-content: center;
-    }
-
-    .low-stock-items {
-      justify-content: center;
-    }
-
-    .filter-buttons {
-      justify-content: center;
-    }
-
-    .filter-btn {
-      flex: 1;
-      text-align: center;
-      min-width: 120px;
     }
   }
-</style>
+</style> 

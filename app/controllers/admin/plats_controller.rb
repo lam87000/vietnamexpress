@@ -2,15 +2,9 @@ class Admin::PlatsController < Admin::BaseController
   before_action :set_plat, only: [:show, :edit, :update, :destroy]
   
   def index
-    @plats = Plat.includes(:category).order(:nom)
-    @categories = Category.order(:name)
-    
-    # Filtre par catégorie
-    if params[:category_id].present?
-      @plats = @plats.where(category_id: params[:category_id])
-    end
-    
-    @low_stock_plats = @plats.where('stock_quantity <= 5')
+    @categories = Category.includes(:plats).order(:id)
+    @plats = Plat.includes(:category)
+    @low_stock_plats = Plat.where('stock_quantity <= 5')
   end
   
   def show
