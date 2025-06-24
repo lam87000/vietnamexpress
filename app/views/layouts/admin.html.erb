@@ -3,6 +3,9 @@
   <head>
     <title>Administration - Restaurant Limoges</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
+    <% if controller_name == 'dashboard' && action_name == 'index' %>
+      <meta http-equiv="refresh" content="70">
+    <% end %>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     
@@ -40,7 +43,7 @@
         
         <div class="admin-nav-user">
           <span class="admin-user-email"><%= current_user.email %></span>
-          <%= link_to admin_logout_path, method: :delete, class: "admin-logout-btn" do %>
+          <%= link_to admin_logout_path, data: { turbo_method: :delete }, class: "admin-logout-btn" do %>
             🚪 Déconnexion
           <% end %>
         </div>

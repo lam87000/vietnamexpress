@@ -1,54 +1,11 @@
 class CommandesController < ApplicationController
-  before_action :set_commande, only: [:show, :edit, :update, :destroy]
+  before_action :set_commande, only: [:show]
   
-  def index
-    @commandes = Commande.includes(:order_items, :plats)
-                        .order(created_at: :desc)
-  end
   
   def show
     @order_items = @commande.order_items.includes(:plat)
   end
   
-  def edit
-    # Seules les commandes en attente ou confirmées peuvent être modifiées
-    unless @commande.can_be_cancelled?
-      redirect_to @commande, alert: "Cette commande ne peut plus être modifiée."
-      return
-    end
-  end
-  
-  def update
-    unless @commande.can_be_cancelled?
-      redirect_to @commande, alert: "Cette commande ne peut plus être modifiée."
-      return
-    end
-    
-    if @commande.update(commande_edit_params)
-      redirect_to @commande, notice: 'Commande mise à jour avec succès.'
-    else
-      render :edit, status: :unprocessable_entity
-    end
-  end
-  
-  def destroy
-    # Seules les commandes en attente ou confirmées peuvent être annulées
-    unless @commande.can_be_cancelled?
-      redirect_to @commande, alert: "Cette commande ne peut plus être annulée."
-      return
-    end
-    
-    # Remettre le stock en place avant de supprimer
-    @commande.order_items.each do |item|
-      plat = item.plat
-      plat.update!(stock_quantity: plat.stock_quantity + item.quantite)
-    end
-    
-    # Marquer comme annulée plutôt que supprimer (pour l'historique)
-    @commande.update!(statut: 'annulee')
-    
-    redirect_to commandes_path, notice: 'Commande annulée avec succès. Le stock a été remis à jour.'
-  end
   
   def new
     @commande = Commande.new
@@ -178,10 +135,6 @@ class CommandesController < ApplicationController
     )
   end
   
-  def commande_edit_params
-    # Pour l'édition, on limite aux champs "sûrs" à modifier
-    params.require(:commande).permit(:heure_retrait, :notes)
-  end
   
   def calculate_cart_total
     return 0 unless session[:cart]

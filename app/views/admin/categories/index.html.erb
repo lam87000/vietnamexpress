@@ -40,7 +40,7 @@
               ✏️ Modifier
             <% end %>
             
-            <%= link_to admin_category_path(category), method: :delete, 
+            <%= link_to admin_category_path(category), data: { turbo_method: :delete }, 
                        class: "admin-btn admin-btn-danger admin-btn-sm",
                        confirm: "Êtes-vous sûr de vouloir supprimer cette catégorie ?" do %>
               🗑️ Supprimer

@@ -3,11 +3,20 @@ class Admin::CommandesController < Admin::BaseController
   
   def index
     @commandes = Commande.includes(:order_items, :plats)
-                        .order(created_at: :desc)
     
     # Filtres
     @commandes = @commandes.by_status(params[:status]) if params[:status].present?
     @commandes = @commandes.today if params[:today] == 'true'
+    
+    # Tri par heure de retrait (plus urgent en premier) pour toutes sauf "Toutes"
+    if params[:status].present?
+      @commandes = @commandes.sort_by { |c| Time.parse(c.heure_retrait.to_s) }
+    else
+      @commandes = @commandes.order(created_at: :desc)
+    end
+    
+    # Compter toutes les commandes en attente pour le badge
+    @pending_count = Commande.today.where(statut: 'en_attente').count
   end
   
   def show
@@ -32,7 +41,16 @@ class Admin::CommandesController < Admin::BaseController
         CommandeMailer.confirmation(@commande).deliver_later
       end
       
-      redirect_to admin_commandes_path, notice: "Commande marquée comme #{params[:status]}"
+      # Rediriger vers les commandes confirmées après validation
+      if params[:status] == 'confirmee'
+        redirect_to admin_commandes_path(status: 'confirmee'), notice: "Commande ##{@commande.id} confirmée"
+      elsif params[:status] == 'prete'
+        redirect_to admin_commandes_path(status: 'prete'), notice: "Commande ##{@commande.id} prête"
+      elsif params[:status] == 'recuperee'
+        redirect_to admin_commandes_path(status: 'recuperee'), notice: "Commande ##{@commande.id} récupérée"
+      else
+        redirect_to admin_commandes_path, notice: "Commande marquée comme #{params[:status]}"
+      end
     else
       redirect_to admin_commandes_path, alert: 'Erreur lors de la mise à jour'
     end

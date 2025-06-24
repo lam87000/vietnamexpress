@@ -67,14 +67,8 @@
   </div>
 
   <div class="actions">
-    <%= link_to "Mes commandes", commandes_path, class: "btn btn-secondary" %>
     <%= link_to "Nouvelle commande", new_commande_path, class: "btn btn-primary" %>
-    <% if @commande.can_be_cancelled? %>
-      <%= link_to "Modifier", edit_commande_path(@commande), class: "btn btn-warning" %>
-      <%= link_to "Annuler la commande", @commande, method: :delete, 
-                  confirm: "Êtes-vous sûr de vouloir annuler cette commande ?", 
-                  class: "btn btn-danger" %>
-    <% end %>
+    <%= link_to "Retour à l'accueil", root_path, class: "btn btn-secondary" %>
   </div>
 </div>
 

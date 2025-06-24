@@ -8,24 +8,19 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   root 'page#home'
   
-  # Routes pour le système de commande
-  resources :commandes do
-    member do
-      patch :update_status
-    end
-    
-    collection do
-      post :add_to_cart
-      delete :remove_from_cart
-      patch :update_cart
-    end
-  end
+  # Routes pour le système de commande (création seulement)
+  get 'commandes/new', to: 'commandes#new', as: 'new_commande'
+  post 'commandes', to: 'commandes#create'
+  get 'commandes/:id', to: 'commandes#show', as: 'commande'
+  
+  # Routes panier
+  post 'commandes/add_to_cart', to: 'commandes#add_to_cart', as: 'add_to_cart_commandes'
+  delete 'commandes/remove_from_cart', to: 'commandes#remove_from_cart', as: 'remove_from_cart_commandes'
+  patch 'commandes/update_cart', to: 'commandes#update_cart', as: 'update_cart_commandes'
   
   resources :plats, only: [:index, :show]
   resources :categories, only: [:index, :show]
   
-  # Route pour contacter le restaurant
-  get 'contact', to: 'page#contact'
   
   # Routes administrateur
   namespace :admin do

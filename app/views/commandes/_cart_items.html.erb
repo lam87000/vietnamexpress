@@ -16,7 +16,7 @@
         <div class="item-actions">
           <span class="item-price"><%= (plat.prix * quantity).to_f %>€</span>
           <%= link_to "Retirer", remove_from_cart_commandes_path(plat_id: plat_id), 
-                      method: :delete, class: "btn btn-sm btn-danger" %>
+                      data: { turbo_method: :delete }, class: "btn btn-sm btn-danger" %>
         </div>
       </div>
     <% end %>

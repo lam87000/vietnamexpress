@@ -166,7 +166,7 @@
     <div class="danger-zone">
       <h3>🗑️ Zone de danger</h3>
       <p>Suppression définitive du plat. Cette action est irréversible.</p>
-      <%= link_to admin_plat_path(@plat), method: :delete, 
+      <%= link_to admin_plat_path(@plat), data: { turbo_method: :delete }, 
                  class: "admin-btn admin-btn-danger",
                  confirm: "Êtes-vous absolument sûr de vouloir supprimer '#{@plat.nom}' ? Cette action est irréversible et supprimera aussi l'historique des commandes associées." do %>
         🗑️ Supprimer définitivement

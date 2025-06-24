@@ -12,6 +12,9 @@
     
     <%= link_to admin_commandes_path(status: 'en_attente'), class: "filter-btn #{'active' if params[:status] == 'en_attente'}" do %>
       En attente
+      <% if @pending_count.to_i > 0 %>
+        <span class="pending-badge" style="background: red !important; color: white !important; padding: 3px 8px; border-radius: 12px; font-size: 11px; margin-left: 8px;"><%= @pending_count %></span>
+      <% end %>
     <% end %>
     
     <%= link_to admin_commandes_path(status: 'confirmee'), class: "filter-btn #{'active' if params[:status] == 'confirmee'}" do %>
@@ -38,7 +41,7 @@
 <div class="commandes-list">
   <% if @commandes.any? %>
     <% @commandes.each do |commande| %>
-      <div class="commande-card">
+      <div class="commande-card <%= 'new-order' if commande.created_at > 5.minutes.ago %>">
         <div class="commande-header">
           <div class="commande-info">
             <h3>Commande #<%= commande.id %></h3>
@@ -50,7 +53,7 @@
             <div class="commande-date">
               <%= commande.created_at.strftime('%d/%m/%Y à %H:%M') %>
             </div>
-            <div class="commande-pickup">
+            <div class="commande-pickup <%= 'urgent' if Time.parse(commande.heure_retrait.to_s) < 45.minutes.from_now %>">
               🕐 Retrait: <%= commande.formatted_pickup_time %>
             </div>
           </div>
@@ -307,6 +310,48 @@
     color: #6c757d;
   }
 
+  /* Nouvelles commandes */
+  .commande-card.new-order {
+    border-left: 4px solid #e74c3c;
+    background: #fff5f5;
+    animation: slideIn 0.5s ease;
+  }
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  /* Urgence */
+  .commande-pickup.urgent {
+    color: #e74c3c !important;
+    font-weight: bold;
+    animation: urgentPulse 2s infinite;
+  }
+
+  @keyframes urgentPulse {
+    0% { color: #e74c3c; }
+    50% { color: #c0392b; }
+    100% { color: #e74c3c; }
+  }
+
+  /* Badge commandes en attente */
+  .pending-badge {
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+  }
+
   @media (max-width: 768px) {
     .filters-bar {
       flex-direction: column;
@@ -336,3 +381,22 @@
     }
   }
 </style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Auto-refresh toutes les 60 secondes
+    console.log('Auto-refresh activé - Liste des commandes admin');
+    
+    setInterval(function() {
+      console.log('Rechargement automatique de la liste des commandes...');
+      window.location.reload();
+    }, 60000);
+
+    // Rediriger vers l'onglet "Confirmées" par défaut si aucun filtre
+    <% unless params[:status].present? || params[:today].present? %>
+      setTimeout(function() {
+        window.location.href = '<%= admin_commandes_path(status: 'confirmee') %>';
+      }, 100);
+    <% end %>
+  });
+</script>

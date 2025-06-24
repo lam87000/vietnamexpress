@@ -98,7 +98,7 @@
         </div>
       <% end %>
 
-      <%= link_to admin_plat_path(@plat), method: :delete, 
+      <%= link_to admin_plat_path(@plat), data: { turbo_method: :delete }, 
                  class: "action-card delete-action",
                  confirm: "Êtes-vous sûr de vouloir supprimer ce plat définitivement ?" do %>
         <div class="action-icon">🗑️</div>

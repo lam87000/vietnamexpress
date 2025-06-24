@@ -136,7 +136,7 @@
         </button>
       <% else %>
         <p>Suppression définitive de la catégorie. Cette action est irréversible.</p>
-        <%= link_to admin_category_path(@category), method: :delete, 
+        <%= link_to admin_category_path(@category), data: { turbo_method: :delete }, 
                    class: "admin-btn admin-btn-danger",
                    confirm: "Êtes-vous sûr de vouloir supprimer définitivement la catégorie '#{@category.name}' ?" do %>
           🗑️ Supprimer définitivement

@@ -1,6 +1,6 @@
 <div class="admin-page-header">
   <h1 class="admin-page-title">Dashboard</h1>
-  <p class="admin-page-subtitle">Vue d'ensemble de votre restaurant</p>
+  <p class="admin-page-subtitle">Vue d'ensemble de votre restaurant - Auto-refresh activé</p>
 </div>
 
 <!-- Statistiques du jour -->
@@ -48,10 +48,13 @@
   <% if @today_orders.any? %>
     <div class="orders-tabs">
       <div class="tab-buttons">
-        <button class="tab-btn active" data-status="pending">
+        <button class="tab-btn" data-status="pending">
           En attente (<%= @pending_orders.count %>)
+          <% if @new_pending_count.to_i > 0 %>
+            <span class="new-badge" style="background: red !important; color: white !important; padding: 3px 8px; border-radius: 12px; font-size: 11px; margin-left: 8px;">+<%= @new_pending_count %></span>
+          <% end %>
         </button>
-        <button class="tab-btn" data-status="confirmed">
+        <button class="tab-btn active" data-status="confirmed">
           Confirmées (<%= @confirmed_orders.count %>)
         </button>
         <button class="tab-btn" data-status="ready">
@@ -60,12 +63,12 @@
       </div>
 
       <div class="tab-content">
-        <div class="tab-panel active" id="pending-orders">
+        <div class="tab-panel" id="pending-orders">
           <% @pending_orders.each do |commande| %>
-            <div class="order-card">
+            <div class="order-card <%= 'new-order' if commande.created_at > 5.minutes.ago %>">
               <div class="order-header">
                 <strong>#<%= commande.id %> - <%= commande.client_nom %></strong>
-                <span class="order-time"><%= commande.formatted_pickup_time %></span>
+                <span class="order-time <%= 'urgent' if Time.parse(commande.heure_retrait.to_s) < 45.minutes.from_now %>"><%= commande.formatted_pickup_time %></span>
               </div>
               <div class="order-details">
                 <div class="order-items">
@@ -84,12 +87,12 @@
           <% end %>
         </div>
 
-        <div class="tab-panel" id="confirmed-orders">
+        <div class="tab-panel active" id="confirmed-orders">
           <% @confirmed_orders.each do |commande| %>
             <div class="order-card">
               <div class="order-header">
                 <strong>#<%= commande.id %> - <%= commande.client_nom %></strong>
-                <span class="order-time"><%= commande.formatted_pickup_time %></span>
+                <span class="order-time <%= 'urgent' if Time.parse(commande.heure_retrait.to_s) < 45.minutes.from_now %>"><%= commande.formatted_pickup_time %></span>
               </div>
               <div class="order-details">
                 <div class="order-items">
@@ -113,7 +116,7 @@
             <div class="order-card">
               <div class="order-header">
                 <strong>#<%= commande.id %> - <%= commande.client_nom %></strong>
-                <span class="order-time"><%= commande.formatted_pickup_time %></span>
+                <span class="order-time <%= 'urgent' if Time.parse(commande.heure_retrait.to_s) < 45.minutes.from_now %>"><%= commande.formatted_pickup_time %></span>
               </div>
               <div class="order-details">
                 <div class="order-items">
@@ -237,6 +240,56 @@
     padding: 16px;
     margin-bottom: 12px;
     background: #f8f9fa;
+    transition: all 0.3s ease;
+  }
+
+  .order-card.new-order {
+    border-left: 4px solid #e74c3c;
+    background: #fff5f5;
+    animation: slideIn 0.5s ease;
+  }
+
+  .new-badge {
+    background: #e74c3c !important;
+    color: white !important;
+    border-radius: 12px;
+    padding: 2px 8px;
+    font-size: 12px !important;
+    font-weight: bold;
+    margin-left: 8px;
+    animation: pulse 2s infinite;
+    display: inline-block !important;
+    position: relative;
+    z-index: 10;
+  }
+
+  .order-time.urgent {
+    color: #e74c3c;
+    font-weight: bold;
+    animation: urgentPulse 2s infinite;
+  }
+
+  @keyframes urgentPulse {
+    0% { color: #e74c3c; }
+    50% { color: #c0392b; }
+    100% { color: #e74c3c; }
+  }
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
   }
 
   .order-header {
@@ -325,5 +378,26 @@
         document.getElementById(status + '-orders').classList.add('active');
       });
     });
+
+    // Activer l'onglet "Confirmées" par défaut
+    const confirmedTab = document.querySelector('[data-status="confirmed"]');
+    const confirmedPanel = document.getElementById('confirmed-orders');
+    if (confirmedTab && confirmedPanel) {
+      // Désactiver tous les onglets
+      tabButtons.forEach(btn => btn.classList.remove('active'));
+      tabPanels.forEach(panel => panel.classList.remove('active'));
+      
+      // Activer l'onglet confirmées
+      confirmedTab.classList.add('active');
+      confirmedPanel.classList.add('active');
+    }
+
+    // Actualisation automatique toutes les 15 secondes
+    console.log('Auto-refresh activé - Dashboard admin');
+    
+    setInterval(function() {
+      console.log('Rechargement automatique du dashboard...');
+      window.location.reload();
+    }, 60000);
   });
 </script>
