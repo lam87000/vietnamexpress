@@ -70,6 +70,7 @@ plats_data.each do |plat_data|
     p.prix = plat_data[:prix]
     p.category_id = plat_data[:category_id]
     p.image_url = plat_data[:image_url]
+    p.stock_quantity = 100  # Quantité en stock pour rendre les plats disponibles
   end
 end
 puts "✅ Plats créés"
