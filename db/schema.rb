@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_06_23_073401) do
+ActiveRecord::Schema[7.1].define(version: 2025_06_25_055953) do
   create_table "categories", force: :cascade do |t|
     t.string "name", null: false
     t.text "description"
@@ -68,7 +68,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_23_073401) do
     t.boolean "admin", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "role", default: "user"
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["role"], name: "index_users_on_role"
   end
 
   add_foreign_key "order_items", "commandes"
