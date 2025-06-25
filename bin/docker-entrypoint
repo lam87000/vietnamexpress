@@ -3,6 +3,17 @@
 # If running the rails server then create or migrate existing database
 if [ "${1}" == "./bin/rails" ] && [ "${2}" == "server" ]; then
   ./bin/rails db:prepare
+  
+  # Charger les seeds seulement s'il n'y a pas de plats
+  ./bin/rails runner "
+    if Plat.count == 0
+      puts 'Chargement des seeds...'
+      load Rails.root.join('db', 'seeds.rb')
+      puts 'Seeds chargés avec succès!'
+    else
+      puts 'Seeds déjà présents, pas de rechargement'
+    end
+  "
 fi
 
 exec "${@}"
