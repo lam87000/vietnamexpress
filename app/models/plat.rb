@@ -26,9 +26,8 @@ class Plat < ApplicationRecord
     if image_url.match?(/^https?:\/\//)
       image_url
     else
-      # Pour les images locales, retourner juste le nom du fichier
-      # Rails s'occupera du chemin dans les vues
-      image_url
+      # Pour les images locales, retourner le chemin depuis public/images/
+      "/images/#{image_url}"
     end
   end
   

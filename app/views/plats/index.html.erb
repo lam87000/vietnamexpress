@@ -31,7 +31,7 @@
                   %>
                   
                   <% if plat.is_local_image? %>
-                    <%= image_tag plat.image_url, alt: plat.nom, class: image_class, loading: 'lazy' %>
+                    <img src="<%= plat.image_path %>" alt="<%= plat.nom %>" class="<%= image_class %>" loading="lazy">
                   <% else %>
                     <img src="<%= plat.image_url %>" alt="<%= plat.nom %>" class="<%= image_class %>" loading="lazy">
                   <% end %>
