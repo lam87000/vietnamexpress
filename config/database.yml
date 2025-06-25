@@ -18,13 +18,7 @@ test:
   <<: *default
   database: storage/test.sqlite3
 
-# PostgreSQL configuration for production
+# SQLite configuration for production (test)
 production:
-  adapter: postgresql
-  encoding: unicode
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  database: <%= ENV['DATABASE_URL'] ? nil : 'restaurant_limoges_production' %>
-  username: <%= ENV['DATABASE_URL'] ? nil : 'restaurant_limoges' %>
-  password: <%= ENV['DATABASE_URL'] ? nil : ENV['DATABASE_PASSWORD'] %>
-  host: <%= ENV['DATABASE_URL'] ? nil : 'localhost' %>
-  url: <%= ENV['DATABASE_URL'] %>
+  <<: *default
+  database: storage/production.sqlite3
