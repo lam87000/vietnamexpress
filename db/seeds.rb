@@ -10,16 +10,16 @@ puts "✅ Admin créé"
 
 # Créer les catégories
 categories_data = [
-  { id: 1, nom: "Entrées" },
-  { id: 2, nom: "Plats" },
-  { id: 3, nom: "Garnitures" },
-  { id: 4, nom: "Plats en soupe" },
-  { id: 5, nom: "Dessert" }
+  { id: 1, name: "Entrées" },
+  { id: 2, name: "Plats" },
+  { id: 3, name: "Garnitures" },
+  { id: 4, name: "Plats en soupe" },
+  { id: 5, name: "Dessert" }
 ]
 
 categories_data.each do |cat_data|
   Category.find_or_create_by!(id: cat_data[:id]) do |c|
-    c.nom = cat_data[:nom]
+    c.name = cat_data[:name]
   end
 end
 puts "✅ Catégories créées"
