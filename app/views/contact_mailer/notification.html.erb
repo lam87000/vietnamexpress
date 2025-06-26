@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nouveau message de contact - Vietnam Express</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+    .header {
+      background: linear-gradient(135deg, #c41e3a 0%, #8b1538 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+    .content {
+      padding: 30px;
+    }
+    .info-row {
+      display: flex;
+      margin-bottom: 15px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+    }
+    .info-label {
+      font-weight: bold;
+      color: #c41e3a;
+      width: 120px;
+      flex-shrink: 0;
+    }
+    .info-value {
+      color: #333;
+      flex: 1;
+    }
+    .message-section {
+      background-color: #f8f9fa;
+      border-left: 4px solid #c41e3a;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 0 5px 5px 0;
+    }
+    .message-section h3 {
+      margin: 0 0 10px 0;
+      color: #c41e3a;
+    }
+    .footer {
+      background-color: #f8f9fa;
+      padding: 20px;
+      text-align: center;
+      color: #666;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>📧 Nouveau Message de Contact</h1>
+      <p>Vietnam Express - Limoges</p>
+    </div>
+    
+    <div class="content">
+      <p>Bonjour,</p>
+      <p>Vous avez reçu un nouveau message depuis le formulaire de contact de votre site web :</p>
+      
+      <div class="info-row">
+        <div class="info-label">👤 Nom :</div>
+        <div class="info-value"><%= @name %></div>
+      </div>
+      
+      <div class="info-row">
+        <div class="info-label">📧 Email :</div>
+        <div class="info-value"><%= @email %></div>
+      </div>
+      
+      <% if @phone.present? %>
+        <div class="info-row">
+          <div class="info-label">📞 Téléphone :</div>
+          <div class="info-value"><%= @phone %></div>
+        </div>
+      <% end %>
+      
+      <% if @date.present? %>
+        <div class="info-row">
+          <div class="info-label">📅 Date souhaitée :</div>
+          <div class="info-value"><%= @date %></div>
+        </div>
+      <% end %>
+      
+      <div class="message-section">
+        <h3>💬 Message :</h3>
+        <p><%= simple_format(@message) %></p>
+      </div>
+      
+      <p><strong>💡 Pour répondre :</strong> Vous pouvez répondre directement à cet email ou contacter <strong><%= @name %></strong> à l'adresse <strong><%= @email %></strong>.</p>
+    </div>
+    
+    <div class="footer">
+      <p>📍 Vietnam Express - 53 Rue François Chénieux, 87100 Limoges</p>
+      <p>Message envoyé le <%= Time.current.strftime("%d/%m/%Y à %H:%M") %></p>
+    </div>
+  </div>
+</body>
+</html>

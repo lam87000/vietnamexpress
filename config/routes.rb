@@ -8,6 +8,9 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   root 'page#home'
   
+  # Route pour le formulaire de contact
+  post 'contacts', to: 'contacts#create'
+  
   # Routes pour le système de commande (création seulement)
   get 'commandes/new', to: 'commandes#new', as: 'new_commande'
   post 'commandes', to: 'commandes#create'

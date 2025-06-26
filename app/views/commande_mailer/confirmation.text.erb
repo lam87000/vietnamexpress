@@ -17,11 +17,11 @@ TOTAL: <%= @commande.montant_total.to_f %>€
 --------------------------
 Date et heure: <%= @commande.formatted_pickup_time %>
 
-Adresse: Restaurant Pho Limoges
-         [Adresse du restaurant]
+Adresse: Restaurant Vietnam Express
+         53 Rue François Chénieux,87100 Limoges
          87000 Limoges
 
-Téléphone: [Numéro du restaurant]
+Téléphone: O6.95.72.86.39
 
 <% if @commande.notes.present? %>
 📝 NOTES SPÉCIALES
@@ -34,5 +34,5 @@ MERCI POUR VOTRE COMMANDE !
 Votre commande sera prête à l'heure indiquée. En cas de retard ou de problème, nous vous contacterons au <%= @commande.client_telephone %>.
 
 ---
-Restaurant Pho Limoges - Cuisine vietnamienne authentique
-Pour toute question, contactez-nous au [numéro] ou par email à [email]
+Restaurant Vietnam Express - Cuisine vietnamienne authentique
+Pour toute question, contactez-nous au 06.95.72.86.39 ou par email à restaurantvietnamexpress@gmail.com
