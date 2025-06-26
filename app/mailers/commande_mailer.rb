@@ -5,7 +5,7 @@ class CommandeMailer < ApplicationMailer
     
     mail(
       to: @commande.client_email,
-      subject: "Confirmation de votre commande ##{@commande.id} - Restaurant Pho Limoges"
+      subject: "Confirmation de votre commande ##{@commande.id} - Vietnam Express"
     )
   end
 end

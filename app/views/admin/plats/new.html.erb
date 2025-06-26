@@ -78,6 +78,19 @@
             </div>
           <% end %>
         </div>
+
+        <div class="form-group full-width">
+          <%= f.label :photo_upload, "Ou télécharger une photo" %>
+          <%= f.file_field :photo_upload, 
+              accept: "image/*", 
+              class: "form-control", 
+              id: "photo_upload" %>
+          <small class="form-help">Sélectionnez une image de votre ordinateur (JPG, PNG, etc.)</small>
+          <div id="photo_preview" class="photo-preview" style="display: none;">
+            <img id="preview_img" src="" alt="Aperçu">
+            <button type="button" id="remove_photo" class="remove-photo-btn">×</button>
+          </div>
+        </div>
       </div>
 
       <div class="form-actions">
@@ -118,7 +131,7 @@
 
       <div class="help-item">
         <h4>🖼️ Image</h4>
-        <p>Une belle image augmente l'attractivité du plat. Utilisez des photos de qualité.</p>
+        <p>Une belle image augmente l'attractivité du plat. Vous pouvez soit entrer une URL d'image soit télécharger une photo depuis votre ordinateur.</p>
       </div>
     </div>
   </div>
@@ -302,6 +315,50 @@
     color: #6c757d;
     font-style: italic;
   }
+
+  /* Styles pour l'upload de photo */
+  .photo-preview {
+    margin-top: 15px;
+    position: relative;
+    display: inline-block;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    overflow: hidden;
+    max-width: 200px;
+  }
+
+  .photo-preview img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    display: block;
+  }
+
+  .remove-photo-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(231, 76, 60, 0.9);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+  }
+
+  .remove-photo-btn:hover {
+    background: rgba(231, 76, 60, 1);
+  }
+
+  input[type="file"] {
+    padding: 8px !important;
+  }
 </style>
 
 <script>
@@ -332,5 +389,62 @@
         }
       });
     });
+
+    // Gestion de l'upload et prévisualisation de photo
+    const photoUpload = document.getElementById('photo_upload');
+    const photoPreview = document.getElementById('photo_preview');
+    const previewImg = document.getElementById('preview_img');
+    const removePhotoBtn = document.getElementById('remove_photo');
+    const imageUrlInput = document.querySelector('input[name="plat[image_url]"]');
+
+    if (photoUpload && photoPreview && previewImg && removePhotoBtn) {
+      photoUpload.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+          // Vérifier le type de fichier
+          if (!file.type.startsWith('image/')) {
+            alert('Veuillez sélectionner un fichier image.');
+            this.value = '';
+            return;
+          }
+
+          // Vérifier la taille (max 5MB)
+          if (file.size > 5 * 1024 * 1024) {
+            alert('L\'image ne doit pas dépasser 5MB.');
+            this.value = '';
+            return;
+          }
+
+          // Créer l'aperçu
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            previewImg.src = e.target.result;
+            photoPreview.style.display = 'inline-block';
+            // Vider le champ URL si une photo est uploadée
+            if (imageUrlInput) {
+              imageUrlInput.value = '';
+            }
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+
+      removePhotoBtn.addEventListener('click', function() {
+        photoUpload.value = '';
+        photoPreview.style.display = 'none';
+        previewImg.src = '';
+      });
+
+      // Si l'utilisateur entre une URL, masquer l'aperçu de l'upload
+      if (imageUrlInput) {
+        imageUrlInput.addEventListener('input', function() {
+          if (this.value.trim() !== '') {
+            photoUpload.value = '';
+            photoPreview.style.display = 'none';
+            previewImg.src = '';
+          }
+        });
+      }
+    }
   });
 </script>

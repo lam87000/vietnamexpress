@@ -22,7 +22,7 @@ class Plat < ApplicationRecord
   def image_path
     return nil if image_url.blank?
     
-    # Si l'URL commence par http/https, c'est une URL externe
+    # Si l'URL commence par http/https, c'est une URL externe (Cloudinary ou autre)
     if image_url.match?(/^https?:\/\//)
       image_url
     else
@@ -37,6 +37,10 @@ class Plat < ApplicationRecord
   
   def is_local_image?
     image_url.present? && !image_url.match?(/^https?:\/\//)
+  end
+  
+  def is_cloudinary_image?
+    image_url.present? && image_url.include?('cloudinary.com')
   end
   
   private

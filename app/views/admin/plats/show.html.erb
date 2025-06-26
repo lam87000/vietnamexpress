@@ -15,7 +15,13 @@
   <div class="plat-main-section">
     <div class="plat-image-section">
       <% if @plat.has_image? %>
-        <img src="<%= @plat.image_path %>" alt="<%= @plat.nom %>" class="plat-main-image">
+        <% if @plat.is_local_image? %>
+          <%= image_tag @plat.image_url, alt: @plat.nom, class: "plat-main-image", loading: 'lazy' %>
+        <% elsif @plat.is_cloudinary_image? %>
+          <%= image_tag @plat.image_url, alt: @plat.nom, class: "plat-main-image", loading: 'lazy' %>
+        <% else %>
+          <img src="<%= @plat.image_url %>" alt="<%= @plat.nom %>" class="plat-main-image" loading="lazy">
+        <% end %>
       <% else %>
         <div class="plat-placeholder">
           <span class="placeholder-icon">🍽️</span>
