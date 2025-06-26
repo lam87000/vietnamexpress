@@ -18,7 +18,10 @@ test:
   <<: *default
   database: storage/test.sqlite3
 
-# SQLite configuration for production (test)
+# PostgreSQL configuration for production (Render)
 production:
-  <<: *default
-  database: storage/production.sqlite3
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  url: <%= ENV['DATABASE_URL'] %>
+  timeout: 5000

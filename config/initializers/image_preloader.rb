@@ -6,25 +6,51 @@ Rails.application.config.after_initialize do
     Rails.logger.info "🚀 Pré-chargement des images au démarrage..."
     
     begin
+      # Vérifier que la table existe avant de l'utiliser
+      unless ActiveRecord::Base.connection.table_exists?('plats')
+        Rails.logger.warn "⚠️  Table 'plats' n'existe pas encore, pré-chargement ignoré"
+        return
+      end
+      
       # Pré-charger toutes les images des plats
       image_paths = []
       
       Plat.where.not(image_url: [nil, '']).find_each do |plat|
         next if plat.image_url.match?(/^https?:\/\//) # Skip les URLs externes
         
-        image_path = Rails.root.join('app/assets/images', plat.image_url)
-        if File.exist?(image_path)
-          # Lire l'image en mémoire (mise en cache automatique)
-          File.read(image_path)
-          image_paths << plat.image_url
+        # Vérifier les chemins possibles pour les images
+        possible_paths = [
+          Rails.root.join('app/assets/images', plat.image_url),
+          Rails.root.join('public/assets', plat.image_url),
+          Rails.root.join('public/images', plat.image_url)
+        ]
+        
+        image_found = false
+        possible_paths.each do |image_path|
+          if File.exist?(image_path)
+            # Lire l'image en mémoire (mise en cache automatique)
+            File.read(image_path)
+            image_paths << plat.image_url
+            image_found = true
+            break
+          end
+        end
+        
+        unless image_found
+          Rails.logger.debug "🔍 Image non trouvée: #{plat.image_url}"
         end
       end
       
       Rails.logger.info "✅ #{image_paths.count} images pré-chargées en mémoire"
-      Rails.logger.info "📁 Images: #{image_paths.join(', ')}"
+      if image_paths.any?
+        Rails.logger.info "📁 Images: #{image_paths.first(5).join(', ')}#{image_paths.count > 5 ? '...' : ''}"
+      end
       
+    rescue ActiveRecord::StatementInvalid => e
+      Rails.logger.warn "⚠️  Base de données pas encore prête: #{e.message}"
     rescue => e
       Rails.logger.error "❌ Erreur pré-chargement images: #{e.message}"
+      Rails.logger.error "📍 Backtrace: #{e.backtrace.first(3).join(', ')}" if Rails.env.development?
     end
     
   else
