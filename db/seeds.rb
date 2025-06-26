@@ -4,9 +4,9 @@ puts "🌱 Création des données de base..."
 # Créer l'utilisateur admin
 admin = User.find_or_create_by!(email: "admin@vietnamexpress.fr") do |u|
   u.password = "admin123"
-  u.role = "admin"
+  u.admin = true
 end
-puts "✅ Admin créé"
+puts "✅ Admin créé: #{admin.email} - Admin: #{admin.admin?}"
 
 # Créer les catégories
 categories_data = [

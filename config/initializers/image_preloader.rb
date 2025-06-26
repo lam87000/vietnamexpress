@@ -1,11 +1,15 @@
 # Initializer pour pré-charger les images au démarrage du serveur
 Rails.application.config.after_initialize do
   # Ne pré-charger qu'en production ou si explicitement demandé
-  # ET seulement si on n'est pas en phase de build (assets:precompile)
-  if (Rails.env.production? || ENV['PRELOAD_IMAGES'] == 'true') && 
-     !defined?(Rails::Console) && 
-     !File.basename($0).in?(['rake', 'rails']) &&
-     ENV['RAILS_ENV'] != 'assets'
+  # ET seulement si on n'est pas en phase de build ou dans un contexte sans DB
+  should_preload = (Rails.env.production? || ENV['PRELOAD_IMAGES'] == 'true') && 
+                   !defined?(Rails::Console) && 
+                   !File.basename($0).in?(['rake', 'rails']) &&
+                   ENV['RAILS_ENV'] != 'assets' &&
+                   !ENV.key?('ASSETS_PRECOMPILE') &&
+                   ENV['DATABASE_URL'].present?
+  
+  if should_preload
     
     Rails.logger.info "🚀 Pré-chargement des images au démarrage..."
     

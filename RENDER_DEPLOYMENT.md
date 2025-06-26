@@ -1,35 +1,44 @@
 # Guide de déploiement Render
 
-## Variables d'environnement à configurer sur Render
+## Configuration manuelle sur Render (sans render.yaml)
 
-### Variables obligatoires :
-- `DATABASE_URL` : Automatiquement configurée par Render PostgreSQL
-- `SECRET_KEY_BASE` : Généré automatiquement par le render.yaml
-- `RAILS_ENV` : production
-- `RAILS_SERVE_STATIC_FILES` : true
-- `RAILS_LOG_TO_STDOUT` : true
+### 1. Créer un service Web
+- Repository : Connecter votre GitHub
+- Branch : main
+- Root Directory : (laisser vide)
+- Environment : Ruby
+- Region : Oregon (US West) ou Frankfurt (Europe)
 
-### Variables pour l'email (optionnelles) :
-- `GMAIL_USERNAME` : Votre adresse Gmail pour l'envoi d'emails
+### 2. Configuration Build & Deploy
+
+**Build Command:**
+```bash
+bundle install && bundle exec rails assets:precompile
+```
+
+**Start Command:**
+```bash
+bundle exec rails db:migrate && bundle exec rails db:seed && bundle exec rails server -p $PORT -e production
+```
+
+### 3. Variables d'environnement obligatoires
+
+- `DATABASE_URL` : (Automatique avec PostgreSQL Render)
+- `SECRET_KEY_BASE` : (Générer une clé secrète : `rails secret`)
+- `RAILS_ENV` : `production`
+- `RAILS_SERVE_STATIC_FILES` : `true`
+- `RAILS_LOG_TO_STDOUT` : `true`
+
+### 4. Variables d'environnement optionnelles
+
+- `GMAIL_USERNAME` : Votre adresse Gmail
 - `GMAIL_PASSWORD` : Votre mot de passe d'application Gmail
 
-## Étapes de déploiement
+### 5. Base de données PostgreSQL
 
-1. **Créer un nouveau service Web sur Render** :
-   - Connecter votre repository GitHub
-   - Utiliser le fichier `render.yaml` fourni
-
-2. **Créer une base de données PostgreSQL** :
-   - Nom : `restaurant-limoges-db`
-   - La connexion sera automatiquement configurée
-
-3. **Configurer les variables d'environnement** :
-   - Les variables principales sont définies dans le render.yaml
-   - Ajouter manuellement GMAIL_USERNAME et GMAIL_PASSWORD si nécessaire
-
-4. **Déployer** :
-   - Le déploiement se fera automatiquement via le render.yaml
-   - Les migrations et seeds s'exécuteront automatiquement
+1. Créer une nouvelle base PostgreSQL sur Render
+2. Noter le nom de la base (ex: `restaurant-limoges-db`)
+3. Dans les variables du service web, ajouter la connexion à cette base
 
 ## Corrections apportées
 
