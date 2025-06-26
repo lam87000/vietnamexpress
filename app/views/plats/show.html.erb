@@ -9,9 +9,11 @@
     <div class="plat-image-section">
       <% if @plat.has_image? %>
         <% if @plat.is_local_image? %>
-          <%= image_tag @plat.image_url, alt: @plat.nom, class: "plat-image" %>
+          <%= image_tag @plat.image_url, alt: @plat.nom, class: "plat-image", loading: 'lazy' %>
+        <% elsif @plat.is_cloudinary_image? %>
+          <%= image_tag @plat.image_url, alt: @plat.nom, class: "plat-image", loading: 'lazy' %>
         <% else %>
-          <img src="<%= @plat.image_url %>" alt="<%= @plat.nom %>" class="plat-image">
+          <img src="<%= @plat.image_url %>" alt="<%= @plat.nom %>" class="plat-image" loading="lazy">
         <% end %>
       <% else %>
         <div class="no-image">
@@ -85,9 +87,11 @@
         <div class="related-plat-card">
           <% if related_plat.has_image? %>
             <% if related_plat.is_local_image? %>
-              <%= image_tag related_plat.image_url, alt: related_plat.nom, class: "related-image" %>
+              <%= image_tag related_plat.image_url, alt: related_plat.nom, class: "related-image", loading: 'lazy' %>
+            <% elsif related_plat.is_cloudinary_image? %>
+              <%= image_tag related_plat.image_url, alt: related_plat.nom, class: "related-image", loading: 'lazy' %>
             <% else %>
-              <img src="<%= related_plat.image_url %>" alt="<%= related_plat.nom %>" class="related-image">
+              <img src="<%= related_plat.image_url %>" alt="<%= related_plat.nom %>" class="related-image" loading="lazy">
             <% end %>
           <% end %>
           <div class="related-content">

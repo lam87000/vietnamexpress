@@ -39,9 +39,11 @@
                          <% if plat.has_image? %>
                <div class="admin-plat-image">
                  <% if plat.is_local_image? %>
-                   <%= image_tag "admin/#{plat.image_url}", alt: plat.nom, loading: 'lazy' %>
+                   <%= image_tag plat.image_url, alt: plat.nom, class: "admin-plat-image", loading: 'lazy' %>
+                 <% elsif plat.is_cloudinary_image? %>
+                   <%= image_tag plat.image_url, alt: plat.nom, class: "admin-plat-image", loading: 'lazy' %>
                  <% else %>
-                   <img src="<%= plat.image_url %>" alt="<%= plat.nom %>" loading="lazy">
+                   <img src="<%= plat.image_url %>" alt="<%= plat.nom %>" class="admin-plat-image" loading="lazy">
                  <% end %>
                </div>
              <% else %>

@@ -20,7 +20,26 @@ class Admin::PlatsController < Admin::BaseController
   end
   
   def create
-    @plat = Plat.new(plat_params)
+    # Gestion de l'upload Cloudinary avant de créer le plat
+    plat_attributes = plat_params
+    if params[:plat][:photo_upload].present?
+      begin
+        result = Cloudinary::Uploader.upload(params[:plat][:photo_upload].tempfile.path,
+          folder: "restaurant_plats",
+          transformation: [
+            { width: 500, height: 500, crop: "fill", quality: "auto", fetch_format: "auto" }
+          ]
+        )
+        plat_attributes = plat_attributes.merge(image_url: result['secure_url'])
+      rescue => e
+        flash.now[:alert] = "Erreur lors de l'upload de l'image: #{e.message}"
+        @categories = Category.all
+        render :new, status: :unprocessable_entity
+        return
+      end
+    end
+    
+    @plat = Plat.new(plat_attributes)
     
     if @plat.save
       redirect_to admin_plats_path, notice: 'Plat créé avec succès'
@@ -31,7 +50,38 @@ class Admin::PlatsController < Admin::BaseController
   end
   
   def update
-    if @plat.update(plat_params)
+    # Gestion de l'upload Cloudinary
+    if params[:plat][:photo_upload].present?
+      begin
+        result = Cloudinary::Uploader.upload(params[:plat][:photo_upload].tempfile.path,
+          folder: "restaurant_plats",
+          transformation: [
+            { width: 500, height: 500, crop: "fill", quality: "auto", fetch_format: "auto" }
+          ]
+        )
+        # Supprimer l'ancienne image de Cloudinary si elle existe
+        if @plat.image_url.present? && @plat.image_url.include?('cloudinary.com')
+          begin
+            public_id = @plat.image_url.split('/').last.split('.').first
+            Cloudinary::Uploader.destroy("restaurant_plats/#{public_id}")
+          rescue => e
+            # Log l'erreur mais continue le processus
+            Rails.logger.warn "Impossible de supprimer l'ancienne image: #{e.message}"
+          end
+        end
+        
+        plat_params_with_image = plat_params.merge(image_url: result['secure_url'])
+      rescue => e
+        flash.now[:alert] = "Erreur lors de l'upload de l'image: #{e.message}"
+        @categories = Category.all
+        render :edit, status: :unprocessable_entity
+        return
+      end
+    else
+      plat_params_with_image = plat_params
+    end
+    
+    if @plat.update(plat_params_with_image)
       redirect_to admin_plats_path, notice: 'Plat mis à jour avec succès'
     else
       @categories = Category.all

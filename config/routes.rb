@@ -21,6 +21,9 @@ Rails.application.routes.draw do
   resources :plats, only: [:index, :show]
   resources :categories, only: [:index, :show]
   
+  # Route de contact
+  post 'contacts', to: 'contacts#create'
+  
   
   # Routes administrateur
   namespace :admin do

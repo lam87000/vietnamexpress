@@ -67,7 +67,7 @@
 </head>
 <body>
   <div class="header">
-    <h1>🍜 Restaurant Pho Limoges</h1>
+    <h1>🍜 Vietnam Express</h1>
     <p>Confirmation de commande</p>
   </div>
 
@@ -96,10 +96,10 @@
     <div class="pickup-info">
       <h3>🕒 Informations de retrait</h3>
       <p><strong>Date et heure:</strong> <%= @commande.formatted_pickup_time %></p>
-      <p><strong>Adresse:</strong> Restaurant Pho Limoges<br>
-      [Adresse du restaurant]<br>
-      87000 Limoges</p>
-      <p><strong>Téléphone:</strong> [Numéro du restaurant]</p>
+      <p><strong>Adresse:</strong> Vietnam Express<br>
+      53 Rue François Chénieux<br>
+      87100 Limoges</p>
+      <p><strong>Téléphone:</strong> 06 95 72 86 39</p>
     </div>
 
     <% if @commande.notes.present? %>
@@ -114,8 +114,8 @@
   </div>
 
   <div class="footer">
-    <p>Restaurant Pho Limoges - Cuisine vietnamienne authentique</p>
-    <p>Pour toute question, contactez-nous au [numéro] ou par email à [email]</p>
+    <p>Vietnam Express - Cuisine vietnamienne authentique</p>
+    <p>Pour toute question, contactez-nous au 06 95 72 86 39</p>
   </div>
 </body>
 </html>
