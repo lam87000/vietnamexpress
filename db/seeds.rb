@@ -1,11 +1,11 @@
 # Seeds pour Restaurant Limoges - Version simple pour Render
 puts "🌱 Création des données de base..."
 
-# Créer l'utilisateur admin
-admin = User.find_or_create_by!(email: "admin@vietnamexpress.fr") do |u|
-  u.password = "admin123"
-  u.admin = true
-end
+# Créer l'utilisateur admin (forcer la mise à jour)
+admin = User.find_or_initialize_by(email: "admin@vietnamexpress.fr")
+admin.password = "admin123"
+admin.admin = true
+admin.save!
 puts "✅ Admin créé: #{admin.email} - Admin: #{admin.admin?}"
 
 # Créer les catégories
