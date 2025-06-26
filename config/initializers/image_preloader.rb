@@ -1,11 +1,18 @@
 # Initializer pour pré-charger les images au démarrage du serveur
 Rails.application.config.after_initialize do
   # Ne pré-charger qu'en production ou si explicitement demandé
-  if Rails.env.production? || ENV['PRELOAD_IMAGES'] == 'true'
+  # ET seulement si on n'est pas en phase de build (assets:precompile)
+  if (Rails.env.production? || ENV['PRELOAD_IMAGES'] == 'true') && 
+     !defined?(Rails::Console) && 
+     !File.basename($0).in?(['rake', 'rails']) &&
+     ENV['RAILS_ENV'] != 'assets'
     
     Rails.logger.info "🚀 Pré-chargement des images au démarrage..."
     
     begin
+      # Vérifier que la base de données est disponible
+      ActiveRecord::Base.connection.execute("SELECT 1")
+      
       # Vérifier que la table existe avant de l'utiliser
       unless ActiveRecord::Base.connection.table_exists?('plats')
         Rails.logger.warn "⚠️  Table 'plats' n'existe pas encore, pré-chargement ignoré"
@@ -46,6 +53,8 @@ Rails.application.config.after_initialize do
         Rails.logger.info "📁 Images: #{image_paths.first(5).join(', ')}#{image_paths.count > 5 ? '...' : ''}"
       end
       
+    rescue ActiveRecord::ConnectionNotEstablished, PG::ConnectionBad => e
+      Rails.logger.warn "⚠️  Base de données pas encore disponible: #{e.message.split("\n").first}"
     rescue ActiveRecord::StatementInvalid => e
       Rails.logger.warn "⚠️  Base de données pas encore prête: #{e.message}"
     rescue => e
