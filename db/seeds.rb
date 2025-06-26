@@ -54,7 +54,7 @@ plats_data = [
   # Plats en soupe
   { nom: "Hoành thánh mì", description: "Soupe de raviolis aux crevettes et nouilles", prix: 9.50, category_id: 4, image_url: "hoanh-thanh-mi-restaurant-vietnamien-limoges.jpg" },
   { nom: "Hủ tiếu - soupe Saïgonnaise", description: "Soupe de nouilles de riz aux fruits de mer", prix: 10.50, category_id: 4, image_url: "soupe-nouilles-porc-crevette-saigonnaise-limoges.jpg" },
-  { nom: "Phở Bò", description: "Soupe traditionnelle vietnamienne au bœuf", prix: 11.50, category_id: 4 },
+  { nom: "Phở Bò", description: "Soupe traditionnelle vietnamienne au bœuf", prix: 11.50, category_id: 4, image_url: "soupe-nouilles-porc-crevette-saigonnaise-limoges.jpg" },
 
   # Desserts
   { nom: "Perles de coco", description: "Dessert traditionnel aux perles de tapioca", prix: 4.50, category_id: 5 },
