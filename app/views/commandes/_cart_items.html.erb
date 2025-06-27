@@ -1,8 +1,9 @@
 <div id="cart-section">
 <h2>Votre panier</h2>
-<% cart_items = defined?(cart_items) ? cart_items : @cart_items %>
-<% total = defined?(total) ? total : @total %>
-<% commande = defined?(commande) ? commande : @commande %>
+<% cart_items = (defined?(cart_items) && cart_items) ? cart_items : (session[:cart] || {}) %>
+<% total = (defined?(total) && total) ? total : calculate_cart_total %>
+<% commande = (defined?(commande) && commande) ? commande : (@commande || Commande.new) %>
+
 
 <% if cart_items&.any? %>
   <div class="cart-items">
