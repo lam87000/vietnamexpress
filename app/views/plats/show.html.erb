@@ -66,8 +66,8 @@
         <% if @plat.available? %>
           <div class="order-section">
             <h3>Commander ce plat</h3>
-            <p>Ajoutez ce plat à votre panier pour le commander.</p>
-            <%= link_to "Ajouter au panier", new_commande_path(focus_plat: @plat.id), 
+            <p>Cliquez pour commander ce plat.</p>
+            <%= link_to "Commander", new_commande_path(focus_plat: @plat.id), 
                         class: "btn btn-primary btn-lg" %>
           </div>
         <% else %>
