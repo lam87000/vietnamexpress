@@ -45,8 +45,15 @@ gem "bootsnap", require: false
 gem "cloudinary"
 
 group :development, :test do
+  # Use sqlite3 as the database for Active Record in development and test
+  gem "sqlite3", ">= 1.4"
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ]
+end
+
+group :production do
+  # Use PostgreSQL as the database for Active Record in production
+  gem "pg", "~> 1.1"
 end
 
 group :development do
