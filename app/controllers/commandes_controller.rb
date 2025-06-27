@@ -8,6 +8,7 @@ class CommandesController < ApplicationController
   
   
   def new
+    clean_expired_cart
     @commande = Commande.new
     @categories = Category.includes(:plats).joins(:plats).where(plats: { available: true }).distinct.order(:id)
     @cart_items = session[:cart] || {}
@@ -22,6 +23,7 @@ class CommandesController < ApplicationController
       
       if result.success?
         session[:cart] = nil
+        session[:cart_timestamp] = nil
         redirect_to @commande, notice: 'Votre commande a été enregistrée avec succès!'
       else
         flash.now[:alert] = result.error
@@ -47,6 +49,8 @@ class CommandesController < ApplicationController
     if plat.available? && quantity > 0
       session[:cart] ||= {}
       session[:cart][plat.id.to_s] = (session[:cart][plat.id.to_s] || 0) + quantity
+      # Mettre à jour le timestamp du panier à chaque ajout
+      session[:cart_timestamp] = Time.current.to_i
       
       respond_to do |format|
         format.html { 
@@ -118,6 +122,8 @@ class CommandesController < ApplicationController
     session[:cart] ||= {}
     session[:cart][params[:plat_id].to_s] = params[:quantity].to_i
     session[:cart].reject! { |k, v| v <= 0 }
+    # Mettre à jour le timestamp du panier lors des modifications
+    session[:cart_timestamp] = Time.current.to_i
     
     redirect_to new_commande_path
   end
@@ -128,6 +134,29 @@ class CommandesController < ApplicationController
     @commande = Commande.find(params[:id])
   end
   
+  def clean_expired_cart
+    return unless session[:cart].present?
+    
+    # Vérifier s'il y a un timestamp
+    cart_timestamp = session[:cart_timestamp]
+    
+    if cart_timestamp.nil?
+      # Si pas de timestamp, on l'ajoute maintenant pour les paniers existants
+      session[:cart_timestamp] = Time.current.to_i
+      return
+    end
+    
+    # Calculer l'âge du panier en minutes
+    cart_age_minutes = (Time.current.to_i - cart_timestamp) / 60
+    
+    # Nettoyer le panier s'il a plus de 20 minutes d'inactivité
+    if cart_age_minutes > 20
+      session[:cart] = nil
+      session[:cart_timestamp] = nil
+      flash[:notice] = "Votre panier a été vidé automatiquement après 20 minutes d'inactivité."
+    end
+  end
+  
   def commande_params
     params.require(:commande).permit(
       :heure_retrait, :client_nom, :client_telephone, 
@@ -135,15 +164,4 @@ class CommandesController < ApplicationController
     )
   end
   
-  
-  def calculate_cart_total
-    return 0 unless session[:cart]
-    
-    total = 0
-    session[:cart].each do |plat_id, quantity|
-      plat = Plat.find(plat_id)
-      total += plat.prix * quantity
-    end
-    total
-  end
 end 
