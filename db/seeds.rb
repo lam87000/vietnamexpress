@@ -64,14 +64,28 @@ plats_data = [
   { nom: "Salade de fruits exotiques", description: "Mélange de fruits tropicaux frais", prix: 5.50, category_id: 5 }
 ]
 
+# Gestion intelligente des plats - PRÉSERVATION DU TRAVAIL CLIENT
+plats_ajoutés = 0
+plats_préservés = 0
+
 plats_data.each do |plat_data|
-  Plat.find_or_create_by!(nom: plat_data[:nom]) do |p|
-    p.description = plat_data[:description]
-    p.prix = plat_data[:prix]
-    p.category_id = plat_data[:category_id]
-    p.image_path = plat_data[:image_path]
+  existing_plat = Plat.find_by(nom: plat_data[:nom])
+  
+  if existing_plat
+    # Plat existe déjà - PRÉSERVATION COMPLÈTE
+    puts "⚠️  '#{plat_data[:nom]}' existe - PRÉSERVÉ (prix: #{existing_plat.prix}€, modifié: #{existing_plat.updated_at.strftime('%d/%m')})"
+    plats_préservés += 1
+  else
+    # Nouveau plat - AJOUT SEULEMENT
+    Plat.create!(plat_data)
+    puts "✅ Nouveau plat ajouté: '#{plat_data[:nom]}' (#{plat_data[:prix]}€)"
+    plats_ajoutés += 1
   end
 end
-puts "✅ Plats créés"
+
+puts "\n🔒 Résumé de protection:"
+puts "   → #{plats_ajoutés} nouveaux plats ajoutés"
+puts "   → #{plats_préservés} plats existants préservés"
+puts "   → Photos Cloudinary, prix personnalisés et plats clients PROTÉGÉS"
 
 puts "�� Seeds terminés !"
