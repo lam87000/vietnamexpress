@@ -72,15 +72,24 @@ plats_data = [
   { nom: "Coup de fruit", description: "assortiment de fruits", prix: 2.50, category_id: 5 }
 ]
 
+# Récupérer tous les noms de plats définis dans les seeds
+noms_plats_seeds = plats_data.map { |plat| plat[:nom] }
+
+# Supprimer tous les plats qui ne sont pas dans les seeds
+plats_a_supprimer = Plat.where.not(nom: noms_plats_seeds)
+puts "🗑️ Suppression de #{plats_a_supprimer.count} anciens plats..."
+plats_a_supprimer.destroy_all
+
+# Créer/Mettre à jour les plats des seeds
 plats_data.each do |plat_data|
-  Plat.find_or_create_by!(nom: plat_data[:nom]) do |p|
-    p.description = plat_data[:description]
-    p.prix = plat_data[:prix]
-    p.category_id = plat_data[:category_id]
-    p.image_url = plat_data[:image_url]
-    p.stock_quantity = 100  # Quantité en stock pour rendre les plats disponibles
-  end
+  plat = Plat.find_or_initialize_by(nom: plat_data[:nom])
+  plat.description = plat_data[:description]
+  plat.prix = plat_data[:prix]
+  plat.category_id = plat_data[:category_id]
+  plat.image_url = plat_data[:image_url]
+  plat.stock_quantity = 100  # Quantité en stock pour rendre les plats disponibles
+  plat.save!
 end
-puts "✅ Plats créés"
+puts "✅ Plats créés/mis à jour"
 
 puts "�� Seeds terminés !"
