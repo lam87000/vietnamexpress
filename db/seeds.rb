@@ -72,24 +72,28 @@ plats_data = [
   { nom: "Coup de fruit", description: "assortiment de fruits", prix: 2.50, category_id: 5 }
 ]
 
-# Récupérer tous les noms de plats définis dans les seeds
-noms_plats_seeds = plats_data.map { |plat| plat[:nom] }
+# Gestion intelligente des plats - PRÉSERVATION DU TRAVAIL CLIENT
+plats_ajoutés = 0
+plats_préservés = 0
 
-# Supprimer tous les plats qui ne sont pas dans les seeds
-plats_a_supprimer = Plat.where.not(nom: noms_plats_seeds)
-puts "🗑️ Suppression de #{plats_a_supprimer.count} anciens plats..."
-plats_a_supprimer.destroy_all
-
-# Créer/Mettre à jour les plats des seeds
 plats_data.each do |plat_data|
-  plat = Plat.find_or_initialize_by(nom: plat_data[:nom])
-  plat.description = plat_data[:description]
-  plat.prix = plat_data[:prix]
-  plat.category_id = plat_data[:category_id]
-  plat.image_url = plat_data[:image_url]
-  plat.stock_quantity = 100  # Quantité en stock pour rendre les plats disponibles
-  plat.save!
+  existing_plat = Plat.find_by(nom: plat_data[:nom])
+  
+  if existing_plat
+    # Plat existe déjà - PRÉSERVATION COMPLÈTE
+    puts "⚠️  '#{plat_data[:nom]}' existe - PRÉSERVÉ (prix: #{existing_plat.prix}€, modifié: #{existing_plat.updated_at.strftime('%d/%m')})"
+    plats_préservés += 1
+  else
+    # Nouveau plat - AJOUT SEULEMENT
+    Plat.create!(plat_data)
+    puts "✅ Nouveau plat ajouté: '#{plat_data[:nom]}' (#{plat_data[:prix]}€)"
+    plats_ajoutés += 1
+  end
 end
-puts "✅ Plats créés/mis à jour"
+
+puts "\n🔒 Résumé de protection:"
+puts "   → #{plats_ajoutés} nouveaux plats ajoutés"
+puts "   → #{plats_préservés} plats existants préservés"
+puts "   → Photos Cloudinary, prix personnalisés et plats clients PROTÉGÉS"
 
 puts "�� Seeds terminés !"
