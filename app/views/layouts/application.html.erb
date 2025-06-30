@@ -56,11 +56,11 @@
             </li>
             
             <!-- Indicateur de panier -->
-            <% if session[:cart]&.any? %>
+            <% if respond_to?(:cart_count) && cart_count > 0 %>
               <li class="nav-item position-relative">
-                <a href="#cart-section" class="nav-link cart-indicator" data-action="click->navbar#scrollToCart">
+                <a href="<%= new_commande_path %>#cart-section" class="nav-link cart-indicator">
                   <i class="fas fa-shopping-cart"></i>
-                  <span class="cart-count"><%= session[:cart].values.sum %></span>
+                  <span class="cart-count"><%= cart_count %></span>
                 </a>
               </li>
             <% end %>

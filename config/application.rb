@@ -23,5 +23,8 @@ module RestaurantLimoges
     #
     config.time_zone = "Paris"
     # config.eager_load_paths << Rails.root.join("extras")
+    
+    # Security: Enable Rack::Attack middleware
+    config.middleware.use Rack::Attack
   end
 end
