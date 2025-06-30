@@ -27,41 +27,49 @@ puts "✅ Catégories créées"
 # Créer les plats
 plats_data = [
   # Entrées
-  { nom: "Nems croustillants (2 pièces)", description: "Rouleaux de printemps frits garnis de légumes et viande", prix: 4.50, category_id: 1, image_url: "nems-croustillants-restaurant-vietnamien-limoges.jpg" },
-  { nom: "Rouleaux de printemps (2 pièces)", description: "Rouleaux frais aux crevettes et légumes", prix: 5.50, category_id: 1, image_url: "rouleaux-printemps-restaurant-vietnamien-limoges.jpg" },
-  { nom: "Salade vietnamienne", description: "Salade fraîche aux herbes et légumes croquants", prix: 6.50, category_id: 1, image_url: "salade-vietnamienne-fraiche-limoges.jpg" },
-  { nom: "Beignets de crevettes (4 pièces)", description: "Crevettes enrobées dans une pâte croustillante", prix: 7.50, category_id: 1, image_url: "beignets-crevettes-restaurant-asiatique-limoges.jpg" },
-  { nom: "Crevettes aigre-douce", description: "Crevettes sautées dans une sauce aigre-douce", prix: 8.50, category_id: 1, image_url: "crevettes-aigre-douce-asiatique-limoges.jpg" },
-  { nom: "Crêpe vietnamienne", description: "Crêpe croustillante garnie de crevettes et pousses de soja", prix: 9.50, category_id: 1, image_url: "crepe-vietnamienne-restaurant-limoges.jpg" },
-  { nom: "Bánh hỏi", description: "Vermicelles de riz servis avec herbes fraîches", prix: 10.50, category_id: 1, image_url: "banh-hoi-chinois-limoges.jpeg" },
-  { nom: "Assortiment d'entrées", description: "Sélection de nos meilleures entrées", prix: 12.50, category_id: 1, image_url: "restaurant-chinois-limoges.jpg" },
+  { nom: "Nems Maison (pièce)", description: "Porc ou poulet, vermicelle, carotte, champignon noir, ail et fines herbes", prix: 1.20, category_id: 1, image_url: "nems-croustillants-restaurant-vietnamien-limoges.jpg" },
+  { nom: "Rouleaux de printemps (pièces)", description: "Galette de riz, salade, soja en pousse, crevettes, nouilles de riz", prix: 2.00, category_id: 1, image_url: "rouleaux-printemps-restaurant-vietnamien-limoges.jpg" },
+  { nom: "Salade vietnamienne", description: "Carotte, choux blancs, vinaigre, crevettes", prix: 4.00, category_id: 1, image_url: "salade-vietnamienne-fraiche-limoges.jpg" },
+  { nom: "Beignets de crevettes", description: "Farine de blé, crevette", prix: 1.00, category_id: 1, image_url: "beignets-crevettes-restaurant-asiatique-limoges.jpg" },
+  { nom: "Crêpe vietnamienne", description: "Farine de riz, lait, soja jeune pousse, crevette, poulet, sauce poisson", prix: 4.00, category_id: 1, image_url: "crepe-vietnamienne-restaurant-limoges.jpg" },
+  { nom: "Miến Gà", description: "Potage de vermicelles au poulet", prix: 4.00, category_id: 1, image_url: "banh-hoi-chinois-limoges.jpeg" },
+  { nom: "Samossa au boeuf", description: "Galette de blé, carotte, peti pois, boeuf", prix: 1.00, category_id: 1, image_url: "restaurant-chinois-limoges.jpg" },
+  { nom: "Raiolis frits aux crevettes", description: "Galette de blé, crevette, porc", prix: 1.00, category_id: 1, image_url: "restaurant-chinois-limoges.jpg" },
 
   # Plats
-  { nom: "Bo bun", description: "Vermicelles de riz au bœuf grillé et légumes", prix: 11.50, category_id: 2, image_url: "bo-bun-vermicelles-boeuf-limoges.jpg" },
-  { nom: "Porc au caramel", description: "Porc mijoté dans une sauce caramel vietnamienne", prix: 12.50, category_id: 2, image_url: "porc-caramel-restaurant-limoges.jpg" },
-  { nom: "Poulet grillé vietnamien", description: "Poulet mariné et grillé aux épices vietnamiennes", prix: 13.50, category_id: 2, image_url: "Poulet-grille-vietnamien-limoges.jpg" },
-  { nom: "Canard laqué", description: "Canard rôti à la sauce soja et aux cinq épices", prix: 15.50, category_id: 2, image_url: "canard-limoges-restaurant-asiatique.jpg" },
-  { nom: "Crevettes sautées", description: "Crevettes sautées aux légumes et gingembre", prix: 14.50, category_id: 2, image_url: "crevettes-limoges-centre-ville.jpg" },
-  { nom: "Poulet aux champignons", description: "Poulet sauté aux champignons noirs et sauce soja", prix: 12.50, category_id: 2, image_url: "poulet-champignons-chinois-limoges.webp" },
-  { nom: "Nouilles sautées", description: "Nouilles sautées aux légumes et viande au choix", prix: 11.50, category_id: 2, image_url: "nouilles-sautees-restaurant-chinois-limoges.jpg" },
-  { nom: "Mì xào", description: "Nouilles sautées vietnamiennes aux fruits de mer", prix: 13.50, category_id: 2, image_url: "mi-xao-limoges-japonais.jpg" },
+  { nom: "Poule au gingembre", description: "Tendres morceaux de poulet émincés et sautés, délicatement parfumés par la fraîcheur vivifiante du gingembre", prix: 10.00, category_id: 2, image_url: "banh-xeo-vietnamien-limoges.jpg" }, 
+  { nom: "Bo bun", description: "Vermicelles, bœuf, salade, carottes et cacahuètes", prix: 10.00, category_id: 2, image_url: "bo-bun-vermicelles-boeuf-limoges.jpg" }, 
+  { nom: "Porc au caramel au poivre", description: "Porc mijoté dans une sauce caramel vietnamienne", prix: 10.00, category_id: 2, image_url: "porc-caramel-restaurant-limoges.jpg" }, 
+  { nom: "Cuisse de poulet grillée", description: "Poulet mariné et grillé aux épices vietnamiennes", prix: 10.00, category_id: 2, image_url: "Poulet-grille-vietnamien-limoges.jpg" }, 
+  { nom: "Magret laqué", description: "Magret rôti à la sauce soja et aux cinq épices", prix: 11.00, category_id: 2, image_url: "canard-limoges-restaurant-asiatique.jpg" }, 
+  { nom: "Crevettes au 3 champignons", description: "Crevettes sautées", prix: 10.00, category_id: 2, image_url: "crevettes-limoges-centre-ville.jpg" }, 
+  { nom: "Crevettes aigre-douce", description: "Crevettes sautées dans une sauce aigre-douce", prix: 10.00, category_id: 1, image_url: "crevettes-aigre-douce-asiatique-limoges.jpg" }, 
+  { nom: "Poulet acurry et pate jaune", description: "Poulet au curry", prix: 10.00, category_id: 2, image_url: "poulet-champignons-chinois-limoges.webp" }, 
+  { nom: "Mì xào", description: "Assiette de nouilles sautées aux légumes", prix: 5,50, category_id: 2, image_url: "mi-xao-limoges-japonais.jpg" },
+  { nom: "Mì xào", description: "Assiette de nouilles sautées légumes crevettes ou boeuf", prix: 10.00, category_id: 2, image_url: "mi-xao-limoges-japonais.jpg" }, x
+  { nom: "Mì xào giòn", description: "Assiette de nouilles croustillantes, légumes, crevettes ou boeuf", prix: 11.00, category_id: 2, image_url: "mi-xao-limoges-japonais.jpg" }, 
+  { nom: "Bánh hỏi", description: "Assiette de vermicelles, traverser de porc laqué", prix: 10.00, category_id: 2, image_url: "banh-xeo-vietnamien-limoges.jpg" }, 
+  { nom: "bò lúc lắc", description: "Assiette de boeuf sauté, riz et légumes", prix: 11.00, category_id: 2, image_url: "banh-xeo-vietnamien-limoges.jpg" }, 
+  { nom: "Poulet au trois champignons", description: "Poulet et ses champignons", prix: 10.00, category_id: 2, image_url: "poulet-champignons-chinois-limoges.webp" },
+
 
   # Garnitures
-  { nom: "Riz blanc", description: "Riz jasmin parfumé", prix: 3.00, category_id: 3 },
-  { nom: "Riz sauté", description: "Riz sauté aux légumes et œuf", prix: 4.50, category_id: 3 },
-  { nom: "Légumes sautés", description: "Mélange de légumes sautés", prix: 5.50, category_id: 3 },
+  { nom: "Riz blanc", description: "Riz jasmin parfumé", prix: 4.00, category_id: 3 },
+  { nom: "Riz tonkinois", description: "Riz sauté aux légumes et œuf", prix: 4.00, category_id: 3 },
+  { nom: "Salade vietnamienne aux crevettes", description: "Carotte, choux blancs, vinaigre, crevettes", prix: 4.00, category_id: 3 },
+  { nom: "Nouilles sautées aux légumes", description: "Nouilles sautées aux légumes et viande au choix", prix: 5.50, category_id: 3, image_url: "nouilles-sautees-restaurant-chinois-limoges.jpg" },
 
   # Plats en soupe
-  { nom: "Hoành thánh mì", description: "Soupe de raviolis aux crevettes et nouilles", prix: 9.50, category_id: 4, image_url: "hoanh-thanh-mi-restaurant-vietnamien-limoges.jpg" },
-  { nom: "Hủ tiếu - soupe Saïgonnaise", description: "Soupe de nouilles de riz aux fruits de mer", prix: 10.50, category_id: 4, image_url: "soupe-nouilles-porc-crevette-saigonnaise-limoges.jpg" },
-  { nom: "Phở Bò", description: "Soupe traditionnelle vietnamienne au bœuf", prix: 11.50, category_id: 4, image_url: "soupe-nouilles-porc-crevette-saigonnaise-limoges.jpg" },
+  { nom: "Hoành thánh mì", description: "Soupe de raviolis aux crevettes, porc et nouilles de blé", prix: 10.00, category_id: 4, image_url: "hoanh-thanh-mi-restaurant-vietnamien-limoges.jpg" },
+  { nom: "Hủ tiếu - soupe Saïgonnaise", description: "Soupe de nouilles de riz, porc et crevettes", prix: 10.00, category_id: 4, image_url: "soupe-nouilles-porc-crevette-saigonnaise-limoges.jpg" },
+  { nom: "Phở Bò", description: "Nouilles de riz au boeuf", prix: 10.00, category_id: 4, image_url: "soupe-nouilles-porc-crevette-saigonnaise-limoges.jpg" },
 
   # Desserts
-  { nom: "Perles de coco", description: "Dessert traditionnel aux perles de tapioca", prix: 4.50, category_id: 5 },
-  { nom: "Flan coco", description: "Flan onctueux au lait de coco", prix: 5.00, category_id: 5 },
-  { nom: "Banane flambée", description: "Banane caramélisée au rhum", prix: 6.50, category_id: 5 },
-  { nom: "Litchis au sirop", description: "Litchis frais au sirop parfumé", prix: 4.50, category_id: 5 },
-  { nom: "Salade de fruits exotiques", description: "Mélange de fruits tropicaux frais", prix: 5.50, category_id: 5 }
+  { nom: "Perles de coco", description: "Dessert traditionnel aux perles de tapioca", prix: 1.50, category_id: 5 },
+  { nom: "Glace (vanille, fraise...)", description: "Boule au choix", prix: 1.50, category_id: 5 },
+  { nom: "Beignet banane (ou pomme / ananas)", description: "beignet frit", prix: 1.50, category_id: 5 },
+  { nom: "Ché Chuôi vietnamien", description: "Banane, lait coco, tapioca", prix: 2.50, category_id: 5 },
+  { nom: "Coup de fruit", description: "assortiment de fruits", prix: 2.50, category_id: 5 }
 ]
 
 plats_data.each do |plat_data|
