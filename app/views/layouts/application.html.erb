@@ -164,16 +164,24 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
       // AOS Animation initialization
-      document.addEventListener('DOMContentLoaded', function() {
+      function initializeAOS() {
         if (typeof AOS !== 'undefined') {
           AOS.init({
             duration: 1000,
-            once: true
+            once: false,
+            offset: 100
           });
         }
-      });
+      }
       
-      document.addEventListener('turbo:load', function() {
+      // Initialize on page load
+      document.addEventListener('DOMContentLoaded', initializeAOS);
+      
+      // Reinitialize on Turbo navigation
+      document.addEventListener('turbo:load', initializeAOS);
+      
+      // Refresh AOS on Turbo render
+      document.addEventListener('turbo:render', function() {
         if (typeof AOS !== 'undefined') {
           AOS.refresh();
         }
