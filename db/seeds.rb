@@ -46,7 +46,7 @@ plats_data = [
   { nom: "Crevettes aigre-douce", description: "Crevettes sautées dans une sauce aigre-douce", prix: 10.00, category_id: 1, image_url: "crevettes-aigre-douce-asiatique-limoges.jpg" }, 
   { nom: "Poulet acurry et pate jaune", description: "Poulet au curry", prix: 10.00, category_id: 2, image_url: "poulet-champignons-chinois-limoges.webp" }, 
   { nom: "Mì xào", description: "Assiette de nouilles sautées aux légumes", prix: 5,50, category_id: 2, image_url: "mi-xao-limoges-japonais.jpg" },
-  { nom: "Mì xào", description: "Assiette de nouilles sautées légumes crevettes ou boeuf", prix: 10.00, category_id: 2, image_url: "mi-xao-limoges-japonais.jpg" }, x
+  { nom: "Mì xào", description: "Assiette de nouilles sautées légumes crevettes ou boeuf", prix: 10.00, category_id: 2, image_url: "mi-xao-limoges-japonais.jpg" }, 
   { nom: "Mì xào giòn", description: "Assiette de nouilles croustillantes, légumes, crevettes ou boeuf", prix: 11.00, category_id: 2, image_url: "mi-xao-limoges-japonais.jpg" }, 
   { nom: "Bánh hỏi", description: "Assiette de vermicelles, traverser de porc laqué", prix: 10.00, category_id: 2, image_url: "banh-xeo-vietnamien-limoges.jpg" }, 
   { nom: "bò lúc lắc", description: "Assiette de boeuf sauté, riz et légumes", prix: 11.00, category_id: 2, image_url: "banh-xeo-vietnamien-limoges.jpg" }, 
