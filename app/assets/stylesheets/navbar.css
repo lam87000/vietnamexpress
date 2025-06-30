@@ -1,0 +1,100 @@
+/* Navbar styles */
+.navbar {
+  background: rgba(26, 26, 26, 0.95) !important;
+  backdrop-filter: blur(10px);
+  padding: 1rem 0;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.navbar-brand {
+  font-size: 1.5rem !important;
+  font-weight: 700 !important;
+  color: white !important;
+}
+
+.brand-text {
+  color: #d4572a !important;
+}
+
+.nav-link {
+  color: white !important;
+  font-weight: 500 !important;
+  font-size: 1.1rem !important;
+  padding: 0.8rem 1rem !important;
+  margin: 0 0.2rem !important;
+  border-radius: 6px !important;
+  transition: all 0.3s ease !important;
+}
+
+.nav-link:hover {
+  color: #d4572a !important;
+  background: rgba(212, 87, 42, 0.1) !important;
+}
+
+/* Padding pour éviter que le contenu passe sous la navbar fixe */
+main {
+  padding-top: 100px !important;
+}
+
+/* Exception pour la page d'accueil */
+.home-page main {
+  padding-top: 0 !important;
+}
+
+.cart-indicator {
+  position: relative;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(212, 87, 42, 0.1);
+  color: #d4572a !important;
+}
+
+.cart-indicator:hover {
+  background: rgba(212, 87, 42, 0.2);
+  color: #d4572a !important;
+}
+
+.cart-count {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: #d4572a;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+/* Styles pour le bouton admin */
+.admin-link {
+  opacity: 0.6;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.admin-link:hover {
+  opacity: 1;
+  background: rgba(108, 117, 125, 0.1) !important;
+  color: #6c757d !important;
+}
