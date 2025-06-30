@@ -1,6 +1,6 @@
 <div id="cart-section">
 <h2>Votre panier</h2>
-<% cart_items = (defined?(cart_items) && cart_items) ? cart_items : (session[:cart] || {}) %>
+<% cart_items = (defined?(cart_items) && cart_items) ? cart_items : (respond_to?(:secure_cart) ? secure_cart : {}) %>
 <% total = (defined?(total) && total) ? total : calculate_cart_total %>
 <% commande = (defined?(commande) && commande) ? commande : (@commande || Commande.new) %>
 

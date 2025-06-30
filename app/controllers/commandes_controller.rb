@@ -11,31 +11,33 @@ class CommandesController < ApplicationController
     clean_expired_cart
     @commande = Commande.new
     @categories = Category.includes(:plats).joins(:plats).where(plats: { available: true }).distinct.order(:id)
-    @cart_items = session[:cart] || {}
+    @cart_items = secure_cart
     @total = calculate_cart_total
   end
   
   def create
     @commande = Commande.new(commande_params)
     
-    if session[:cart].present?
-      result = OrderCreationService.new(@commande, session[:cart]).call
+    cart_items = secure_cart
+    if cart_items.present?
+      result = OrderCreationService.new(@commande, cart_items).call
       
       if result.success?
-        session[:cart] = nil
+        # Vider le panier sécurisé
+        self.secure_cart = {}
         session[:cart_timestamp] = nil
         redirect_to @commande, notice: 'Votre commande a été enregistrée avec succès!'
       else
         flash.now[:alert] = result.error
         @categories = Category.includes(:plats).joins(:plats).where(plats: { available: true }).distinct.order(:id)
-        @cart_items = session[:cart]
+        @cart_items = cart_items
         @total = calculate_cart_total
         render :new
       end
     else
       flash.now[:alert] = "Votre panier est vide. Ajoutez des plats avant de confirmer votre commande."
       @categories = Category.includes(:plats).joins(:plats).where(plats: { available: true }).distinct.order(:id)
-      @cart_items = session[:cart] || {}
+      @cart_items = {}
       @total = calculate_cart_total
       render :new
     end
@@ -46,9 +48,28 @@ class CommandesController < ApplicationController
     plat = Plat.find(params[:plat_id])
     quantity = params[:quantity].to_i
     
+    # SÉCURITÉ: Validation stricte des quantités
+    if quantity <= 0 || quantity > 10
+      respond_to do |format|
+        format.html { 
+          redirect_to new_commande_path, alert: "Quantité invalide (1-10 autorisée)" 
+        }
+        format.json { 
+          render json: { 
+            success: false, 
+            message: "Quantité invalide (1-10 autorisée)"
+          }
+        }
+      end
+      return
+    end
+    
     if plat.available? && quantity > 0
-      session[:cart] ||= {}
-      session[:cart][plat.id.to_s] = (session[:cart][plat.id.to_s] || 0) + quantity
+      # Utiliser le panier sécurisé
+      cart = secure_cart
+      cart[plat.id.to_s] = (cart[plat.id.to_s] || 0) + quantity
+      self.secure_cart = cart
+      
       # Mettre à jour le timestamp du panier à chaque ajout
       session[:cart_timestamp] = Time.current.to_i
       
@@ -61,13 +82,13 @@ class CommandesController < ApplicationController
           render json: {
             success: true,
             message: "#{plat.nom} ajouté au panier",
-            cart_count: session[:cart].values.sum,
+            cart_count: cart.values.sum,
             cart_total: calculate_cart_total.to_f,
             cart_html: render_to_string(
               partial: 'cart_items_json',
               formats: [:html],
               locals: { 
-                cart_items: session[:cart], 
+                cart_items: cart, 
                 total: calculate_cart_total
               }
             )
@@ -91,8 +112,10 @@ class CommandesController < ApplicationController
   end
   
   def remove_from_cart
+    cart = secure_cart
     plat_id = params[:plat_id].to_s
-    session[:cart]&.delete(plat_id)
+    cart.delete(plat_id)
+    self.secure_cart = cart
     
     respond_to do |format|
       format.html { 
@@ -103,13 +126,13 @@ class CommandesController < ApplicationController
         render json: {
           success: true,
           message: "Plat retiré du panier",
-          cart_count: session[:cart]&.values&.sum || 0,
+          cart_count: cart.values.sum,
           cart_total: calculate_cart_total.to_f,
           cart_html: render_to_string(
             partial: 'cart_items_json',
             formats: [:html],
             locals: { 
-              cart_items: session[:cart] || {}, 
+              cart_items: cart, 
               total: calculate_cart_total
             }
           )
@@ -119,9 +142,10 @@ class CommandesController < ApplicationController
   end
   
   def update_cart
-    session[:cart] ||= {}
-    session[:cart][params[:plat_id].to_s] = params[:quantity].to_i
-    session[:cart].reject! { |k, v| v <= 0 }
+    cart = secure_cart
+    cart[params[:plat_id].to_s] = params[:quantity].to_i
+    cart.reject! { |k, v| v <= 0 }
+    self.secure_cart = cart
     # Mettre à jour le timestamp du panier lors des modifications
     session[:cart_timestamp] = Time.current.to_i
     
@@ -135,7 +159,8 @@ class CommandesController < ApplicationController
   end
   
   def clean_expired_cart
-    return unless session[:cart].present?
+    cart = secure_cart
+    return unless cart.present?
     
     # Vérifier s'il y a un timestamp
     cart_timestamp = session[:cart_timestamp]
@@ -151,7 +176,7 @@ class CommandesController < ApplicationController
     
     # Nettoyer le panier s'il a plus de 20 minutes d'inactivité
     if cart_age_minutes > 20
-      session[:cart] = nil
+      self.secure_cart = {}
       session[:cart_timestamp] = nil
       flash[:notice] = "Votre panier a été vidé automatiquement après 20 minutes d'inactivité."
     end
