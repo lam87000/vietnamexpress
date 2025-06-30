@@ -95,9 +95,16 @@
               🍽️ Marquer prête
             <% end %>
           <% elsif commande.statut == 'prete' %>
-            <%= link_to change_status_admin_commande_path(commande, status: 'recuperee'), 
-                       data: { turbo_method: :patch }, class: "admin-btn admin-btn-success admin-btn-sm" do %>
-              ✨ Marquer récupérée
+            <%= link_to delete_completed_admin_commande_path(commande), 
+                       data: { turbo_method: :delete, turbo_confirm: "Supprimer définitivement cette commande ?" }, 
+                       class: "admin-btn admin-btn-danger admin-btn-sm" do %>
+              🗑️ Commande remise
+            <% end %>
+          <% elsif commande.statut == 'recuperee' %>
+            <%= link_to delete_completed_admin_commande_path(commande), 
+                       data: { turbo_method: :delete, turbo_confirm: "Supprimer définitivement cette commande ?" }, 
+                       class: "admin-btn admin-btn-danger admin-btn-sm" do %>
+              🗑️ Supprimer
             <% end %>
           <% end %>
           

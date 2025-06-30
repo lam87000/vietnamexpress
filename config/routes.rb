@@ -41,6 +41,7 @@ Rails.application.routes.draw do
     resources :commandes, only: [:index, :show, :edit, :update] do
       member do
         patch :change_status
+        delete :delete_completed
       end
     end
     
