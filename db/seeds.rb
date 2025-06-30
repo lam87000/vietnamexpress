@@ -37,7 +37,7 @@ plats_data = [
   { nom: "Raiolis frits aux crevettes", description: "Galette de blé, crevette, porc", prix: 1.00, category_id: 1, image_url: "restaurant-chinois-limoges.jpg" },
 
   # Plats
-  { nom: "Poule au gingembre", description: "Tendres morceaux de poulet émincés et sautés, délicatement parfumés par la fraîcheur vivifiante du gingembre", prix: 10.00, category_id: 2, image_url: "banh-xeo-vietnamien-limoges.jpg" }, 
+  { nom: "Poule au gingembre", description: "Tendres morceaux de poulet émincés et sautés, délicatement parfumés par la fraîcheur vivifiante du gingembre", prix: 10.00, category_id: 2, image_url: "" }, 
   { nom: "Bo bun", description: "Vermicelles, bœuf, salade, carottes et cacahuètes", prix: 10.00, category_id: 2, image_url: "bo-bun-vermicelles-boeuf-limoges.jpg" }, 
   { nom: "Porc au caramel au poivre", description: "Porc mijoté dans une sauce caramel vietnamienne", prix: 10.00, category_id: 2, image_url: "porc-caramel-restaurant-limoges.jpg" }, 
   { nom: "Cuisse de poulet grillée", description: "Poulet mariné et grillé aux épices vietnamiennes", prix: 10.00, category_id: 2, image_url: "Poulet-grille-vietnamien-limoges.jpg" }, 
@@ -48,8 +48,8 @@ plats_data = [
   { nom: "Mì xào", description: "Assiette de nouilles sautées aux légumes", prix: 5.50, category_id: 2, image_url: "mi-xao-limoges-japonais.jpg" },
   { nom: "Mì xào", description: "Assiette de nouilles sautées légumes crevettes ou boeuf", prix: 10.00, category_id: 2, image_url: "mi-xao-limoges-japonais.jpg" }, 
   { nom: "Mì xào giòn", description: "Assiette de nouilles croustillantes, légumes, crevettes ou boeuf", prix: 11.00, category_id: 2, image_url: "mi-xao-limoges-japonais.jpg" }, 
-  { nom: "Bánh hỏi", description: "Assiette de vermicelles, traverser de porc laqué", prix: 10.00, category_id: 2, image_url: "banh-xeo-vietnamien-limoges.jpg" }, 
-  { nom: "bò lúc lắc", description: "Assiette de boeuf sauté, riz et légumes", prix: 11.00, category_id: 2, image_url: "banh-xeo-vietnamien-limoges.jpg" }, 
+  { nom: "Bánh hỏi", description: "Assiette de vermicelles, traverser de porc laqué", prix: 10.00, category_id: 2, image_url: "" }, 
+  { nom: "bò lúc lắc", description: "Assiette de boeuf sauté, riz et légumes", prix: 11.00, category_id: 2, image_url: "" }, 
   { nom: "Poulet au trois champignons", description: "Poulet et ses champignons", prix: 10.00, category_id: 2, image_url: "poulet-champignons-chinois-limoges.webp" },
 
 
