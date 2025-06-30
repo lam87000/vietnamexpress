@@ -127,8 +127,9 @@
                 <div class="order-total"><%= commande.montant_total.to_f %>€</div>
               </div>
               <div class="order-actions">
-                <%= link_to "Marquer récupérée", change_status_admin_commande_path(commande, status: 'recuperee'), 
-                           data: { turbo_method: :patch }, class: "admin-btn admin-btn-success admin-btn-sm" %>
+                <%= link_to "Commande remise", delete_completed_admin_commande_path(commande), 
+                           data: { turbo_method: :delete, turbo_confirm: "Supprimer définitivement cette commande ?" }, 
+                           class: "admin-btn admin-btn-danger admin-btn-sm" %>
                 <%= link_to "Voir", admin_commande_path(commande), class: "admin-btn admin-btn-sm" %>
               </div>
             </div>

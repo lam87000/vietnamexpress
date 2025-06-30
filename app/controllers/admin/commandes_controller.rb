@@ -1,5 +1,5 @@
 class Admin::CommandesController < Admin::BaseController
-  before_action :set_commande, only: [:show, :edit, :update, :change_status]
+  before_action :set_commande, only: [:show, :edit, :update, :change_status, :delete_completed]
   
   def index
     @commandes = Commande.includes(:order_items, :plats)
@@ -54,6 +54,17 @@ class Admin::CommandesController < Admin::BaseController
     else
       redirect_to admin_commandes_path, alert: 'Erreur lors de la mise à jour'
     end
+  end
+  
+  def delete_completed
+    commande_id = @commande.id
+    client_nom = @commande.client_nom
+    
+    # Supprimer les order_items associés puis la commande
+    @commande.order_items.destroy_all
+    @commande.destroy
+    
+    redirect_to admin_commandes_path(status: 'confirmee'), notice: "Commande ##{commande_id} de #{client_nom} supprimée définitivement"
   end
   
   private
