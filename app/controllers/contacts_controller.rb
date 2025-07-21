@@ -16,7 +16,7 @@ class ContactsController < ApplicationController
     
     begin
       # Envoi de l'email
-      ContactMailer.notification(@contact_params).deliver_later
+      ContactMailer.notification(@contact_params).deliver_now
       
       redirect_to root_path, notice: "Votre message a bien été envoyé. Nous vous répondrons dans les plus brefs délais."
     rescue => e

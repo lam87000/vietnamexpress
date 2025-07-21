@@ -7,7 +7,7 @@ class ContactMailer < ApplicationMailer
     @message = contact_params[:message]
     
     # Email de destination : toujours votre Gmail (celui configuré dans les variables)
-    recipient_email = ENV['GMAIL_USERNAME']
+    recipient_email = ENV['GOOGLE_EMAIL_USER']
     
     mail(
       to: recipient_email,
