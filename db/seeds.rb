@@ -1,47 +1,66 @@
 # db/seeds.rb
-# Ce fichier est SÛR pour la production. Il ne contient que les données
-# indispensables au premier lancement du site.
+# Version Robuste pour la Production AVEC MESSAGES DE DEBUG
 
-puts "🌱 Création des données de base..."
+puts "🌱 [DEBUG] Début du script de seeds."
 
-# --- 1. Création du compte Administrateur ---
-# En production, le mot de passe doit être une variable d'environnement sécurisée.
+# --- 1. Mise à jour forcée du compte Administrateur ---
 admin_email = "admin@vietnamexpress.fr"
-admin_password = Rails.env.production? ? ENV['ADMIN_INITIAL_PASSWORD'] : "admin123"
+puts "🌱 [DEBUG] Email admin à traiter: #{admin_email}"
 
-# Sécurité : On bloque le seed en production si le mot de passe n'est pas défini.
-if Rails.env.production? && admin_password.blank?
-  abort("❌ ERREUR: La variable d'environnement ADMIN_INITIAL_PASSWORD doit être définie en production.")
+admin_password = ENV['ADMIN_INITIAL_PASSWORD']
+
+if Rails.env.production?
+  if admin_password.present?
+    puts "🌱 [DEBUG] Variable ADMIN_INITIAL_PASSWORD trouvée."
+  else
+    abort("❌ ERREUR: La variable d'environnement ADMIN_INITIAL_PASSWORD est ABSENTE ou VIDE en production.")
+  end
 end
 
+# ÉTAPE 1 : On trouve l'utilisateur existant OU on en prépare un nouveau en mémoire.
+# Rien n'est sauvegardé en base de données à ce stade.
 admin = User.find_or_initialize_by(email: admin_email)
+
 if admin.new_record?
-  admin.password = admin_password
-  admin.role = 'admin' # On s'assure qu'il est bien admin
-  admin.save!
-  puts "✅ Compte administrateur créé pour '#{admin.email}'."
+  puts "🌱 [DEBUG] L'utilisateur '#{admin_email}' n'existait pas. Préparation pour création."
 else
-  puts "ℹ️  Le compte administrateur '#{admin.email}' existe déjà."
+  puts "🌱 [DEBUG] L'utilisateur '#{admin_email}' existe déjà. Préparation pour mise à jour."
+end
+
+# ÉTAPE 2 : On FORCE les attributs. Que l'utilisateur soit nouveau ou ancien,
+# on lui assigne le bon mot de passe et le statut admin.
+admin.password = admin_password
+admin.admin = true # <- On force le statut admin à 'true'
+
+# ÉTAPE 3 : On sauvegarde.
+# Si l'utilisateur était nouveau, il est créé.
+# S'il existait, il est mis à jour avec les attributs ci-dessus.
+if admin.save
+  puts "✅ [DEBUG] Sauvegarde de l'admin réussie."
+  puts "✅ [DEBUG] Attributs finaux: email=#{admin.email}, est admin?=#{admin.admin?}"
+else
+  # Si la sauvegarde échoue, on affiche les erreurs pour comprendre pourquoi.
+  puts "❌ ERREUR: Impossible de sauvegarder l'administrateur : #{admin.errors.full_messages.to_sentence}"
+  abort # On arrête tout le processus de déploiement en cas d'erreur ici.
 end
 
 
 # --- 2. Création des Catégories de plats ---
-# Ce sont les seules données de menu nécessaires au départ.
+# (Cette partie ne change pas)
+puts "\n- Création/Mise à jour des catégories..."
 categories_data = [
   { id: 1, name: "Entrées" },
   { id: 2, name: "Plats" },
   { id: 3, name: "Garnitures" },
   { id: 4, name: "Plats en soupe" },
-  { id: 5, name: "Desserts" } # J'ai vu "Dessert" dans votre code, je l'ai mis au pluriel "Desserts"
+  { id: 5, name: "Desserts" }
 ]
-
-puts "\n- Création ou mise à jour des catégories..."
 categories_data.each do |cat_data|
   Category.find_or_create_by!(id: cat_data[:id]) do |c|
     c.name = cat_data[:name]
   end
 end
-puts "✅ Catégories créées."
+puts "✅ Catégories synchronisées."
 
 
-puts "\n🎉 Seeds de base terminés. L'application est prête à être utilisée."
+puts "\n🎉 [DEBUG] Seeds de base terminés."
