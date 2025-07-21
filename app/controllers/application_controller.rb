@@ -54,5 +54,6 @@ class ApplicationController < ActionController::Base
     secure_cart.values.sum
   end
   
+  # CETTE LIGNE DOIT ÊTRE ICI, DANS LE CONTRÔLEUR
   helper_method :calculate_cart_total, :secure_cart, :cart_count
 end

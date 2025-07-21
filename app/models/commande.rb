@@ -10,6 +10,7 @@ class Commande < ApplicationRecord
   validates :client_email, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP }
   validate :email_not_disposable
   validate :email_domain_valid
+  validate :heure_retrait_valide # <--- MODIFICATION 1 : LA LIGNE EST AJOUTÉE ICI
   validates :statut, inclusion: { in: %w[en_attente confirmee prete recuperee annulee] }
   
   before_validation :set_default_status
@@ -32,6 +33,27 @@ class Commande < ApplicationRecord
   
   private
   
+  # MODIFICATION 2 : LA NOUVELLE MÉTHODE EST AJOUTÉE ICI, JUSTE SOUS 'private'
+  def heure_retrait_valide
+    return if heure_retrait.blank?
+
+    # Convertir l'heure en un objet Time pour la comparaison
+    time_to_check = Time.zone.parse(heure_retrait.strftime("%H:%M"))
+
+    # Définir les plages horaires autorisées
+    lunch_start = Time.zone.parse("12:00")
+    lunch_end = Time.zone.parse("14:00")
+    dinner_start = Time.zone.parse("19:00")
+    dinner_end = Time.zone.parse("21:30")
+
+    is_in_lunch_range = time_to_check.between?(lunch_start, lunch_end)
+    is_in_dinner_range = time_to_check.between?(dinner_start, dinner_end)
+
+    unless is_in_lunch_range || is_in_dinner_range
+      errors.add(:heure_retrait, "doit être entre 12h00 et 14h00 ou entre 19h00 et 21h30.")
+    end
+  end
+
   def set_default_status
     self.statut ||= 'en_attente'
   end
@@ -101,4 +123,4 @@ class Commande < ApplicationRecord
       errors.add(:client_email, "Domaine email frauduleux détecté")
     end
   end
-end 
+end
