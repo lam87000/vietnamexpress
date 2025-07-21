@@ -38,7 +38,7 @@ class Admin::CommandesController < Admin::BaseController
     if @commande.update(statut: params[:status])
       # Envoyer un email de confirmation si la commande est confirmée
       if params[:status] == 'confirmee'
-        CommandeMailer.confirmation(@commande).deliver_later
+        CommandeMailer.confirmation(@commande).deliver_now
       end
       
       # Rediriger vers les commandes confirmées après validation
