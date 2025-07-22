@@ -89,6 +89,11 @@
                        data: { turbo_method: :patch }, class: "admin-btn admin-btn-success admin-btn-sm" do %>
               ✅ Confirmer
             <% end %>
+            <%= link_to change_status_admin_commande_path(commande, status: 'refusee'), 
+                       data: { turbo_method: :patch, turbo_confirm: "Êtes-vous sûr de vouloir refuser cette commande ? Un email sera envoyé au client." }, 
+                       class: "admin-btn admin-btn-danger admin-btn-sm" do %>
+              ❌ Refuser
+            <% end %>
           <% elsif commande.statut == 'confirmee' %>
             <%= link_to change_status_admin_commande_path(commande, status: 'prete'), 
                        data: { turbo_method: :patch }, class: "admin-btn admin-btn-success admin-btn-sm" do %>

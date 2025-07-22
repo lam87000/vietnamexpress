@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+</head>
+<body>
+  <h1>Bonjour <%= @commande.client_nom %>,</h1>
+  <p>
+    Nous vous remercions pour votre commande numéro <strong>#<%= @commande.id %></strong>.
+  </p>
+  <p>
+    Malheureusement, nous ne sommes pas en mesure de l'honorer pour le moment en raison d'un très grand nombre de commandes en cours.
+  </p>
+  <p>
+    Nous sommes sincèrement désolés pour ce désagrément et espérons avoir l'occasion de vous servir très prochainement.
+  </p>
+  <p>
+    Aucun prélèvement n'a été effectué pour cette commande.
+  </p>
+  <br>
+  <p>L'équipe du Vietnam Express</p>
+</body>
+</html>

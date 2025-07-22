@@ -36,23 +36,29 @@ class Admin::CommandesController < Admin::BaseController
   
   def change_status
     if @commande.update(statut: params[:status])
-      # Envoyer un email de confirmation si la commande est confirmée
-      if params[:status] == 'confirmee'
+      # Gérer les notifications par email
+      case params[:status]
+      when 'confirmee'
         CommandeMailer.confirmation(@commande).deliver_now
+      when 'refusee'
+        CommandeMailer.rejection(@commande).deliver_now
       end
       
-      # Rediriger vers les commandes confirmées après validation
-      if params[:status] == 'confirmee'
-        redirect_to admin_commandes_path(status: 'confirmee'), notice: "Commande ##{@commande.id} confirmée"
-      elsif params[:status] == 'prete'
-        redirect_to admin_commandes_path(status: 'prete'), notice: "Commande ##{@commande.id} prête"
-      elsif params[:status] == 'recuperee'
-        redirect_to admin_commandes_path(status: 'recuperee'), notice: "Commande ##{@commande.id} récupérée"
+      # Rediriger vers la bonne page avec un message adapté
+      case params[:status]
+      when 'confirmee'
+        redirect_to admin_commandes_path(status: 'confirmee'), notice: "Commande ##{@commande.id} confirmée."
+      when 'refusee'
+        redirect_to admin_commandes_path(status: 'en_attente'), notice: "Commande ##{@commande.id} refusée et client notifié."
+      when 'prete'
+        redirect_to admin_commandes_path(status: 'prete'), notice: "Commande ##{@commande.id} marquée comme prête."
+      when 'recuperee'
+        redirect_to admin_commandes_path(status: 'recuperee'), notice: "Commande ##{@commande.id} marquée comme récupérée."
       else
-        redirect_to admin_commandes_path, notice: "Commande marquée comme #{params[:status]}"
+        redirect_to admin_commandes_path, notice: "Statut de la commande ##{@commande.id} mis à jour."
       end
     else
-      redirect_to admin_commandes_path, alert: 'Erreur lors de la mise à jour'
+      redirect_to admin_commandes_path, alert: "Erreur lors de la mise à jour du statut."
     end
   end
   

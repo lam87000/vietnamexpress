@@ -11,7 +11,7 @@ class Commande < ApplicationRecord
   validate :email_not_disposable
   validate :email_domain_valid
   validate :heure_retrait_valide # <--- MODIFICATION 1 : LA LIGNE EST AJOUTÉE ICI
-  validates :statut, inclusion: { in: %w[en_attente confirmee prete recuperee annulee] }
+  validates :statut, inclusion: { in: %w[en_attente confirmee prete recuperee annulee refusee] }
   
   before_validation :set_default_status
   before_validation :set_order_date
