@@ -6,6 +6,11 @@ class OrderCreationService
   end
   
   def call
+    # Vérifier si les commandes sont acceptées avant tout traitement
+    unless restaurant_accepting_orders?
+      return OpenStruct.new(success?: false, error: "Les commandes sont actuellement suspendues")
+    end
+    
     ActiveRecord::Base.transaction do
       calculate_total
       create_order
@@ -31,6 +36,12 @@ class OrderCreationService
   end
   
   private
+  
+  def restaurant_accepting_orders?
+    # Réutilise la même logique que ApplicationController
+    timestamp = Rails.cache.read('orders_disabled_until')
+    timestamp.nil? || timestamp < Time.current
+  end
   
   def calculate_total
     @total = 0

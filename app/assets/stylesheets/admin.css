@@ -157,6 +157,14 @@
   background-color: #c0392b;
 }
 
+.admin-btn-warning {
+  background-color: #f39c12;
+}
+
+.admin-btn-warning:hover {
+  background-color: #e67e22;
+}
+
 .admin-btn-sm {
   padding: 6px 12px;
   font-size: 12px;

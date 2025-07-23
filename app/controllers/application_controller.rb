@@ -1,8 +1,27 @@
 class ApplicationController < ActionController::Base
-  # SÉCURITÉ: Chiffrement des données sensibles du panier
+  # On ajoute nos nouvelles méthodes à la liste.
+  helper_method :calculate_cart_total, :secure_cart, :cart_count,
+                :restaurant_accepting_orders?, :orders_disabled_until
+  # --- LOGIQUE DU STATUT DES COMMANDES (MÉTHODES PUBLIQUES) ---
+  def set_orders_disabled_until(timestamp)
+    # On stocke dans le cache la date de fin du blocage.
+    Rails.cache.write('orders_disabled_until', timestamp, expires_in: 24.hours)
+  end
+
+  def orders_disabled_until
+    Rails.cache.read('orders_disabled_until')
+  end
+
+  def restaurant_accepting_orders?
+    # Les commandes sont acceptées si le timestamp de blocage est absent ou dans le passé.
+    timestamp = orders_disabled_until
+    timestamp.nil? || timestamp < Time.current
+  end
+
   private
   
-  def cart_encryptor
+ 
+def cart_encryptor
     @cart_encryptor ||= ActiveSupport::MessageEncryptor.new(
       Rails.application.secret_key_base[0..31]
     )
@@ -30,7 +49,7 @@ class ApplicationController < ActionController::Base
   def secure_cart=(cart_data)
     session[:encrypted_cart] = encrypt_cart_data(cart_data)
   end
-  
+
   public
   
   # Helper method pour calculer le total du panier (version sécurisée)
@@ -54,6 +73,5 @@ class ApplicationController < ActionController::Base
     secure_cart.values.sum
   end
   
-  # CETTE LIGNE DOIT ÊTRE ICI, DANS LE CONTRÔLEUR
-  helper_method :calculate_cart_total, :secure_cart, :cart_count
+  # Les helper_method sont déjà déclarés en haut du fichier
 end

@@ -1,4 +1,13 @@
 <div class="ordering-page" data-controller="cart">
+
+<% unless @orders_enabled %>
+    <div class="orders-disabled-banner">
+      <p>⚠️ En raison d'une forte affluence, nous ne pouvons malheureusement pas prendre de nouvelles commandes pour le moment. Veuillez réessayer plus tard. Merci de votre compréhension. L'équipe du Vietnam Express Limoges</p>
+    </div>
+  <% end %>
+
+  <!-- fin de l'affichage du message si les commandes sont fermées -->
+
   <h1>Passer une commande</h1>
   
   <% if flash[:alert] %>
@@ -36,8 +45,8 @@
                 <%= form_with url: add_to_cart_commandes_path, method: :post, local: false, class: "add-to-cart-form", data: { cart_target: "form" } do |f| %>
                   <%= f.hidden_field :plat_id, value: plat.id %>
                   <div class="quantity-controls">
-                    <%= f.number_field :quantity, value: 1, min: 1, max: plat.stock_quantity, class: "quantity-input" %>
-                    <%= f.submit "Ajouter au panier", class: "btn btn-primary", disabled: !plat.available? %>
+                    <%= f.number_field :quantity, value: 1, min: 1, max: plat.stock_quantity, class: "quantity-input", disabled: !@orders_enabled %>
+                    <%= f.submit "Ajouter au panier", class: "btn btn-primary", disabled: !plat.available? || !@orders_enabled %>
                   </div>
                 <% end %>
               </div>

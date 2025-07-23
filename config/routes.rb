@@ -31,6 +31,9 @@ Rails.application.routes.draw do
   # Routes administrateur
   namespace :admin do
     root 'dashboard#index'
+
+   #route permettant de gérer l'état des commandes 
+   post 'settings/toggle_orders', to: 'settings#toggle_orders', as: 'toggle_orders_settings' 
     
     # Authentification admin
     get 'login', to: 'sessions#new'

@@ -1,5 +1,6 @@
 class CommandesController < ApplicationController
   before_action :set_commande, only: [:show]
+  before_action :check_orders_enabled, only: [:create, :add_to_cart, :update_cart]
   
   
   def show
@@ -8,6 +9,8 @@ class CommandesController < ApplicationController
   
   
   def new
+     # On ajoute cette ligne pour passer le statut à la vue : permet de griser le bouton sur la page commande si les commandes sont fermées
+    @orders_enabled = restaurant_accepting_orders?
     clean_expired_cart
     @commande = Commande.new
     @categories = Category.includes(:plats).joins(:plats).where(plats: { available: true }).distinct.order(:id)
@@ -182,6 +185,19 @@ class CommandesController < ApplicationController
     end
   end
   
+  def check_orders_enabled
+    unless restaurant_accepting_orders?
+      respond_to do |format|
+        format.html { 
+          redirect_to new_commande_path, alert: "Les commandes sont actuellement suspendues." 
+        }
+        format.json { 
+          render json: { success: false, message: "Les commandes sont actuellement suspendues." }
+        }
+      end
+    end
+  end
+
   def commande_params
     params.require(:commande).permit(
       :heure_retrait, :client_nom, :client_telephone, 

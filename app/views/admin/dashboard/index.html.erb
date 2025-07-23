@@ -1,7 +1,32 @@
+# interface administratreur
 <div class="admin-page-header">
   <h1 class="admin-page-title">Dashboard</h1>
   <p class="admin-page-subtitle">Vue d'ensemble de votre restaurant - Auto-refresh activé</p>
 </div>
+
+<!-- NOUVELLE SECTION DE CONTRÔLE DES COMMANDES permet de mettre fin ou de relancer les commandes en lignes -->
+<div class="admin-control-panel">
+  <h3>Contrôle des Commandes</h3>
+  
+  <% if restaurant_accepting_orders? %>
+    <p class="status-indicator status-on">✅ Les commandes sont actuellement <strong>ACTIVÉES</strong>.</p>
+    <div class="actions">
+      <span>Suspendre les commandes pour :</span>
+      <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
+        <%= button_to "30 min", admin_toggle_orders_settings_path(duration: 30), method: :post, class: "admin-btn admin-btn-warning" %>
+        <%= button_to "1 heure", admin_toggle_orders_settings_path(duration: 60), method: :post, class: "admin-btn admin-btn-warning" %>
+        <%= button_to "2 heures", admin_toggle_orders_settings_path(duration: 120), method: :post, class: "admin-btn admin-btn-warning" %>
+      </div>
+    </div>
+  <% else %>
+    <p class="status-indicator status-off">❌ Les commandes sont actuellement <strong>SUSPENDUES</strong> jusqu'à <%= orders_disabled_until.strftime('%Hh%M') %>.</p>
+    <div class="actions">
+      <%= button_to "Réactiver les commandes maintenant", admin_toggle_orders_settings_path, method: :post, class: "admin-btn admin-btn-success" %>
+    </div>
+  <% end %>
+</div>
+
+<!-- fin de la section de contrôle des commandes -->
 
 <!-- Statistiques du jour -->
 <div class="stats-grid">
