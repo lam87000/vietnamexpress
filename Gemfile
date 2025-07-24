@@ -50,6 +50,9 @@ gem "cloudinary"
 #service redis : doit nous permettre de stocker le statu de l'activation et de la fin d'activiation des commandes en lignes pour le restaurant 
 gem "redis"
 
+# site map permet d'améliorer notre site map google fonctionne avec sitemap.rb
+gem "sitemap_generator"
+
 group :development, :test do
   # Use sqlite3 as the database for Active Record in development and test
   gem "sqlite3", ">= 1.4"

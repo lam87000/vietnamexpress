@@ -1,1 +1,6 @@
-# See https://www.robotstxt.org/robotstxt.html for documentation on how to use the robots.txt file
+# Autorise tous les robots à explorer toutes les pages.
+User-agent: *
+Allow: /
+
+# Indique l'emplacement du plan du site.
+Sitemap: https://vietnamexpress.fr/sitemap.xml.gz

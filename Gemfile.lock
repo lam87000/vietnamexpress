@@ -246,6 +246,8 @@ GEM
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 3.0)
       websocket (~> 1.0)
+    sitemap_generator (6.3.0)
+      builder (~> 3.0)
     sprockets (4.2.2)
       concurrent-ruby (~> 1.0)
       logger
@@ -300,6 +302,7 @@ DEPENDENCIES
   rails (~> 7.1.5, >= 7.1.5.1)
   redis
   selenium-webdriver
+  sitemap_generator
   sprockets-rails
   sqlite3 (>= 1.4)
   stimulus-rails
