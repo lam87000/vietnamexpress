@@ -1,3 +1,7 @@
+
+<% content_for :title, "#{@plat.nom} - Spécialité Vietnamienne | Vietnam Express Limoges" %>
+<% content_for :description, "Dégustez notre fameux #{@plat.nom} à Limoges. #{strip_tags(@plat.description).truncate(80)}. Un plat incontournable de la cuisine asiatique." %>
+
 <div class="plat-details">
   <div class="breadcrumb">
     <%= link_to "Accueil", root_path %> > 
