@@ -1,6 +1,7 @@
 module ApplicationHelper
     # Méthode pour générer les créneaux horaires pour le menu déroulant
-    def available_pickup_times
+    def restaurant_pickup_slots
+      
       # Génère des créneaux toutes les 15 minutes
       lunch_slots = generate_time_slots("12:00", "14:00", 15)
       dinner_slots = generate_time_slots("19:00", "21:30", 15)

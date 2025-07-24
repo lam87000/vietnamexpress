@@ -51,7 +51,7 @@
         
         <div class="form-group">
         <%= f.label :heure_retrait, "Heure de retrait souhaitée *" %>
-        <%= f.select :heure_retrait, available_pickup_times, { prompt: "Choisissez un créneau" }, required: true, class: "form-control" %>
+        <%= f.select :heure_retrait, restaurant_pickup_slots, { prompt: "Choisissez un créneau" }, required: true, class: "form-control" %>
       </div>
     </div>
       
