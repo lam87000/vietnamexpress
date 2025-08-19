@@ -59,14 +59,12 @@
             </li>
             
             <!-- Indicateur de panier -->
-            <% if respond_to?(:cart_count) && cart_count > 0 %>
-              <li class="nav-item position-relative">
-                <a href="<%= new_commande_path %>#cart-section" class="nav-link cart-indicator">
-                  <i class="fas fa-shopping-cart"></i>
-                  <span class="cart-count"><%= cart_count %></span>
-                </a>
-              </li>
-            <% end %>
+            <li class="nav-item position-relative" id="cart-indicator" style="display: <%= (respond_to?(:cart_count) && cart_count > 0) ? 'block' : 'none' %>">
+              <a href="<%= new_commande_path %>#cart-section" class="nav-link cart-indicator">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="cart-count"><%= respond_to?(:cart_count) ? cart_count : 0 %></span>
+              </a>
+            </li>
             
             <li class="nav-item">
               <a class="nav-link btn btn-primary ms-2 px-3" href="tel:0695728639">
@@ -190,6 +188,9 @@
         }
       });
     </script>
+    
+    <!-- Page-specific JavaScript files -->
+    <%= yield :javascripts %>
     
   </body>
 </html>

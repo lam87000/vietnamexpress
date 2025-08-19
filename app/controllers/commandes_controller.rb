@@ -88,11 +88,12 @@ class CommandesController < ApplicationController
             cart_count: cart.values.sum,
             cart_total: calculate_cart_total.to_f,
             cart_html: render_to_string(
-              partial: 'cart_items_json',
+              partial: 'cart_items',
               formats: [:html],
               locals: { 
                 cart_items: cart, 
-                total: calculate_cart_total
+                total: calculate_cart_total,
+                commande: @commande || Commande.new
               }
             )
           }
@@ -132,11 +133,12 @@ class CommandesController < ApplicationController
           cart_count: cart.values.sum,
           cart_total: calculate_cart_total.to_f,
           cart_html: render_to_string(
-            partial: 'cart_items_json',
+            partial: 'cart_items',
             formats: [:html],
             locals: { 
               cart_items: cart, 
-              total: calculate_cart_total
+              total: calculate_cart_total,
+              commande: @commande || Commande.new
             }
           )
         }
@@ -153,6 +155,34 @@ class CommandesController < ApplicationController
     session[:cart_timestamp] = Time.current.to_i
     
     redirect_to new_commande_path
+  end
+  
+  def clear_cart
+    self.secure_cart = {}
+    session[:cart_timestamp] = nil
+    
+    respond_to do |format|
+      format.html { 
+        redirect_to new_commande_path, notice: "Votre panier a été vidé" 
+      }
+      format.json { 
+        render json: {
+          success: true,
+          message: "Votre panier a été vidé",
+          cart_count: 0,
+          cart_total: 0.0,
+          cart_html: render_to_string(
+            partial: 'cart_items',
+            formats: [:html],
+            locals: { 
+              cart_items: {}, 
+              total: 0,
+              commande: @commande || Commande.new
+            }
+          )
+        }
+      }
+    end
   end
   
   private

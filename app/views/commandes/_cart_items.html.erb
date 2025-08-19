@@ -1,4 +1,3 @@
-<div id="cart-section">
 <h2>Votre panier</h2>
 <% cart_items = (defined?(cart_items) && cart_items) ? cart_items : (respond_to?(:secure_cart) ? secure_cart : {}) %>
 <% total = (defined?(total) && total) ? total : calculate_cart_total %>
@@ -61,14 +60,23 @@
       </div>
       
       <div class="form-actions">
-        <%= f.submit "Confirmer la commande", class: "btn btn-success btn-lg", disabled: !@orders_enabled %>
+        <%= f.submit "Confirmer la commande", class: "btn btn-success btn-lg", disabled: !restaurant_accepting_orders? %>
       </div>
     <% end %>
+    
+    <!-- Bouton pour vider le panier -->
+    <div class="clear-cart-section">
+      <%= link_to "Vider mon panier", clear_cart_commandes_path, 
+                  data: { 
+                    turbo_method: :delete,
+                    confirm: "Êtes-vous sûr de vouloir vider votre panier ?"
+                  }, 
+                  class: "btn btn-outline-danger btn-lg" %>
+    </div>
   </div>
 <% else %>
   <div class="empty-cart">
     <p>Votre panier est vide</p>
     <p>Ajoutez des plats ci-dessus pour commencer votre commande.</p>
   </div>
-<% end %>
-</div> 
+<% end %> 

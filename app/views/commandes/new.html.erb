@@ -1,4 +1,4 @@
-<div class="ordering-page" data-controller="cart">
+<div class="ordering-page">
 
 <% unless @orders_enabled %>
     <div class="orders-disabled-banner">
@@ -42,11 +42,11 @@
                 <p class="price"><%= plat.formatted_price %></p>
                 <p class="stock">Stock disponible: <%= plat.stock_quantity %></p>
                 
-                <%= form_with url: add_to_cart_commandes_path, method: :post, local: false, class: "add-to-cart-form", data: { cart_target: "form" } do |f| %>
+                <%= form_with url: add_to_cart_commandes_path, method: :post, local: false, class: "add-to-cart-form" do |f| %>
                   <%= f.hidden_field :plat_id, value: plat.id %>
                   <div class="quantity-controls">
-                    <%= f.number_field :quantity, value: 1, min: 1, max: plat.stock_quantity, class: "quantity-input", disabled: !@orders_enabled %>
-                    <%= f.submit "Ajouter au panier", class: "btn btn-primary", disabled: !plat.available? || !@orders_enabled %>
+                    <%= f.number_field :quantity, value: 1, min: 1, max: plat.stock_quantity, class: "quantity-input", disabled: !restaurant_accepting_orders? %>
+                    <%= f.submit "Ajouter au panier", class: "btn btn-primary", disabled: !plat.available? || !restaurant_accepting_orders? %>
                   </div>
                 <% end %>
               </div>
@@ -58,11 +58,15 @@
   </div>
   
   <!-- Panier -->
-  <div class="cart-section" data-cart-target="cartSection">
+  <div class="cart-section" id="cart-section">
     <%= render 'cart_items' %>
   </div>
 </div>
 
 <%= content_for :stylesheets do %>
   <%= stylesheet_link_tag "orders", "data-turbo-track": "reload" %>
-<% end %> 
+<% end %>
+
+<%= javascript_include_tag "cart" %>
+
+ 

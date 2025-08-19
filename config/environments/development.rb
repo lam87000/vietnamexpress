@@ -29,6 +29,10 @@ Rails.application.configure do
     # code permet d'utiliser redis comme cache et remplace notre ancienne solution
 
     config.cache_store = :redis_cache_store, { url: ENV.fetch("REDIS_URL") { "redis://localhost:6379/1" } }
+
+     # config.public_file_server.headers = {
+    #   "Cache-Control" => "public, max-age=#{2.days.to_i}"
+    # }
       
     config.public_file_server.headers = {
       "Cache-Control" => "public, max-age=#{2.days.to_i}"

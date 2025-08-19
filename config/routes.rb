@@ -20,6 +20,7 @@ Rails.application.routes.draw do
   post 'commandes/add_to_cart', to: 'commandes#add_to_cart', as: 'add_to_cart_commandes'
   delete 'commandes/remove_from_cart', to: 'commandes#remove_from_cart', as: 'remove_from_cart_commandes'
   patch 'commandes/update_cart', to: 'commandes#update_cart', as: 'update_cart_commandes'
+  delete 'commandes/clear_cart', to: 'commandes#clear_cart', as: 'clear_cart_commandes'
   
   resources :plats, only: [:index, :show]
   resources :categories, only: [:index, :show]
