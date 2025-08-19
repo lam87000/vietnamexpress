@@ -1,0 +1,62 @@
+/* ===========================================
+   CORRECTION SPÉCIFIQUE POUR LES ONGLETS DU MENU
+   =========================================== */
+
+/* Styles ULTRA SPÉCIFIQUES pour les onglets du menu */
+body .home-page .menu-section .menu-tabs .nav-pills .nav-item .nav-link,
+body .home-page #menu .menu-tabs .nav-pills .nav-item .nav-link,
+body .home-page .menu-tabs .nav-pills .nav-item .nav-link {
+  color: #000000 !important;
+  background-color: #ffffff !important;
+  border: 3px solid #333333 !important;
+  border-radius: 25px !important;
+  padding: 15px 30px !important;
+  margin: 0 0.5rem !important;
+  font-weight: 700 !important;
+  font-size: 1.1rem !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
+  position: relative !important;
+  overflow: hidden !important;
+  text-shadow: none !important;
+  display: inline-block !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+}
+
+/* Hover des onglets */
+body .home-page .menu-section .menu-tabs .nav-pills .nav-item .nav-link:hover,
+body .home-page #menu .menu-tabs .nav-pills .nav-item .nav-link:hover,
+body .home-page .menu-tabs .nav-pills .nav-item .nav-link:hover {
+  color: #c8102e !important;
+  border-color: #c8102e !important;
+  background-color: #fff5f5 !important;
+  transform: translateY(-3px) scale(1.05) !important;
+  box-shadow: 0 8px 25px rgba(200, 16, 46, 0.3) !important;
+}
+
+/* Onglet actif */
+body .home-page .menu-section .menu-tabs .nav-pills .nav-item .nav-link.active,
+body .home-page #menu .menu-tabs .nav-pills .nav-item .nav-link.active,
+body .home-page .menu-tabs .nav-pills .nav-item .nav-link.active {
+  background-color: #c8102e !important;
+  color: #ffffff !important;
+  border-color: #c8102e !important;
+  box-shadow: 0 8px 25px rgba(200, 16, 46, 0.4) !important;
+  transform: translateY(-2px) !important;
+}
+
+/* Styles pour les icônes dans les onglets */
+body .home-page .menu-section .menu-tabs .nav-pills .nav-item .nav-link i,
+body .home-page #menu .menu-tabs .nav-pills .nav-item .nav-link i,
+body .home-page .menu-tabs .nav-pills .nav-item .nav-link i {
+  color: inherit !important;
+  margin-right: 8px !important;
+}
+
+/* Styles pour le texte dans les onglets */
+body .home-page .menu-section .menu-tabs .nav-pills .nav-item .nav-link span,
+body .home-page #menu .menu-tabs .nav-pills .nav-item .nav-link span,
+body .home-page .menu-tabs .nav-pills .nav-item .nav-link span {
+  color: inherit !important;
+}

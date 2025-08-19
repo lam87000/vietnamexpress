@@ -26,7 +26,7 @@
         <% end %>
         <div class="plats-grid">
           <% category.plats.available.each do |plat| %>
-            <div class="plat-card">
+            <div class="plat-card" data-plat-id="<%= plat.id %>">
               <% if plat.has_image? %>
                 <% if plat.is_local_image? %>
                   <%= image_tag plat.image_url, alt: plat.nom, class: "plat-image", loading: 'lazy' %>
@@ -69,4 +69,30 @@
 
 <%= javascript_include_tag "cart" %>
 
- 
+<% if @selected_plat_id %>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Attendre que la page soit complètement chargée
+      setTimeout(function() {
+        const platElement = document.querySelector('[data-plat-id="<%= @selected_plat_id %>"]');
+        if (platElement) {
+          // Scroll vers le plat avec une animation fluide
+          platElement.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center' 
+          });
+          
+          // Ajouter un effet visuel temporaire
+          platElement.style.transition = 'all 0.3s ease';
+          platElement.style.transform = 'scale(1.02)';
+          platElement.style.boxShadow = '0 8px 25px rgba(200, 16, 46, 0.3)';
+          
+          setTimeout(function() {
+            platElement.style.transform = 'scale(1)';
+            platElement.style.boxShadow = '';
+          }, 2000);
+        }
+      }, 500);
+    });
+  </script>
+<% end %>

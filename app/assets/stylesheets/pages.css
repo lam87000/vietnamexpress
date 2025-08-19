@@ -1,0 +1,44 @@
+/* =======================
+   STYLES SPÉCIFIQUES POUR LES PAGES
+   ======================= */
+
+/* Styles pour les onglets du menu sur la page d'accueil */
+.home-page .menu-section .nav-pills .nav-link,
+.home-page #menu .nav-pills .nav-link,
+.home-page .menu-tabs .nav-pills .nav-link {
+  color: #000000 !important;
+  background: #ffffff !important;
+  border-radius: 25px !important;
+  padding: 15px 30px !important;
+  margin: 0 0.5rem !important;
+  font-weight: 700 !important;
+  font-size: 1.1rem !important;
+  transition: all 0.3s ease !important;
+  border: 3px solid #333333 !important;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
+  position: relative !important;
+  overflow: hidden !important;
+  text-shadow: none !important;
+}
+
+/* Hover des onglets */
+.home-page .menu-section .nav-pills .nav-link:hover,
+.home-page #menu .nav-pills .nav-link:hover,
+.home-page .menu-tabs .nav-pills .nav-link:hover {
+  color: #c8102e !important;
+  border-color: #c8102e !important;
+  background: #fff5f5 !important;
+  transform: translateY(-3px) scale(1.05) !important;
+  box-shadow: 0 8px 25px rgba(200, 16, 46, 0.3) !important;
+}
+
+/* Onglet actif */
+.home-page .menu-section .nav-pills .nav-link.active,
+.home-page #menu .nav-pills .nav-link.active,
+.home-page .menu-tabs .nav-pills .nav-link.active {
+  background: #c8102e !important;
+  color: #ffffff !important;
+  border-color: #c8102e !important;
+  box-shadow: 0 8px 25px rgba(200, 16, 46, 0.4) !important;
+  transform: translateY(-2px) !important;
+}

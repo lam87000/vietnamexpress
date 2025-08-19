@@ -450,31 +450,9 @@ body {
   background: var(--light-color);
 }
 
-.menu-tabs .nav-pills {
-  --bs-nav-pills-link-active-bg: var(--primary-color);
-}
 
-.nav-pills .nav-link {
-  color: var(--text-dark);
-  background: white;
-  border-radius: 25px;
-  padding: 12px 24px;
-  margin: 0 0.5rem;
-  font-weight: 500;
-  transition: var(--transition);
-  border: 2px solid transparent;
-}
 
-.nav-pills .nav-link:hover {
-  color: var(--primary-color);
-  border-color: var(--primary-color);
-}
 
-.nav-pills .nav-link.active {
-  background: var(--primary-color);
-  color: white;
-  border-color: var(--primary-color);
-}
 
 .menu-item {
   background: white;
@@ -1008,11 +986,7 @@ body {
     padding: 4rem 0;
   }
   
-  .nav-pills .nav-link {
-    margin: 0.25rem;
-    padding: 10px 16px;
-    font-size: 0.9rem;
-  }
+
   
   .menu-item {
     flex-direction: column;

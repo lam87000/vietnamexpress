@@ -450,31 +450,11 @@ body {
   background: var(--light-color);
 }
 
-.menu-tabs .nav-pills {
-  --bs-nav-pills-link-active-bg: var(--primary-color);
-}
 
-.nav-pills .nav-link {
-  color: var(--text-dark);
-  background: white;
-  border-radius: 25px;
-  padding: 12px 24px;
-  margin: 0 0.5rem;
-  font-weight: 500;
-  transition: var(--transition);
-  border: 2px solid transparent;
-}
 
-.nav-pills .nav-link:hover {
-  color: var(--primary-color);
-  border-color: var(--primary-color);
-}
 
-.nav-pills .nav-link.active {
-  background: var(--primary-color);
-  color: white;
-  border-color: var(--primary-color);
-}
+
+
 
 .menu-item {
   background: white;
@@ -486,6 +466,7 @@ body {
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 1rem;
+  cursor: pointer;
 }
 
 .menu-item:hover {
@@ -516,6 +497,52 @@ body {
   color: var(--primary-color);
   margin-left: 1rem;
   flex-shrink: 0;
+}
+
+/* Clickable Menu Items */
+.clickable-plat {
+  cursor: pointer !important;
+  transition: var(--transition);
+}
+
+.clickable-plat:hover {
+  transform: translateX(10px);
+  box-shadow: var(--shadow-hover);
+  border-left: 4px solid var(--primary-color);
+}
+
+.clickable-plat:hover .menu-item-name {
+  color: var(--primary-color);
+}
+
+.clickable-plat:hover .menu-item-price {
+  color: var(--primary-dark);
+  transform: scale(1.05);
+}
+
+.menu-item-arrow {
+  font-size: 0.8rem;
+  margin-left: 0.5rem;
+  opacity: 0.6;
+  transition: var(--transition);
+}
+
+.clickable-plat:hover .menu-item-arrow {
+  opacity: 1;
+  transform: translateX(3px);
+  color: var(--primary-color);
+}
+
+/* Menu help text */
+.menu-section .section-subtitle small {
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-top: 0.5rem;
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background: rgba(200, 16, 46, 0.1);
+  border-radius: 20px;
+  color: var(--primary-color);
 }
 
 /* Chefs Section */
@@ -1025,11 +1052,7 @@ body {
     padding: 4rem 0;
   }
   
-  .nav-pills .nav-link {
-    margin: 0.25rem;
-    padding: 10px 16px;
-    font-size: 0.9rem;
-  }
+
   
   .menu-item {
     flex-direction: column;

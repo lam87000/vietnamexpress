@@ -151,6 +151,7 @@
         <h2 class="section-title" data-aos="fade-up">Notre Menu Complet</h2>
         <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">
           Découvrez notre carte complète de spécialités vietnamiennes, préparées selon les traditions authentiques.
+          <br><small class="text-muted">💡 Cliquez sur un plat pour le commander directement</small>
         </p>
       </div>
     </div>
@@ -184,9 +185,14 @@
           <div class="row g-4">
             <% category.plats.available.each_with_index do |plat, plat_index| %>
               <div class="col-md-6">
-                <div class="menu-item" data-aos="<%= plat_index.even? ? 'fade-right' : 'fade-left' %>">
+                <div class="menu-item clickable-plat" 
+                     data-aos="<%= plat_index.even? ? 'fade-right' : 'fade-left' %>"
+                     data-plat-url="<%= new_commande_path(plat_id: plat.id) %>">
                   <div class="menu-item-info">
-                    <h5 class="menu-item-name"><%= plat.nom %></h5>
+                    <h5 class="menu-item-name">
+                      <%= plat.nom %>
+                      <i class="fas fa-arrow-right menu-item-arrow"></i>
+                    </h5>
                     <p class="menu-item-description"><%= plat.description %></p>
                   </div>
                   <div class="menu-item-price"><%= plat.formatted_price %></div>
@@ -633,5 +639,27 @@
     </div>
   </div>
 </section>
+
+<script>
+  // Gestion des clics sur les plats du menu
+  document.addEventListener('DOMContentLoaded', function() {
+    const clickablePlats = document.querySelectorAll('.clickable-plat');
+    
+    clickablePlats.forEach(plat => {
+      plat.addEventListener('click', function(e) {
+        // Effet visuel de feedback
+        this.style.transform = 'scale(0.98)';
+        
+        // Redirection vers la page de commande
+        const url = this.getAttribute('data-plat-url');
+        if (url) {
+          setTimeout(() => {
+            window.location.href = url;
+          }, 150);
+        }
+      });
+    });
+  });
+</script>
 
 </div>

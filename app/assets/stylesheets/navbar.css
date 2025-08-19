@@ -16,7 +16,8 @@
   color: #d4572a !important;
 }
 
-.nav-link {
+/* Styles spécifiques pour la navbar principale */
+.navbar .nav-link {
   color: white !important;
   font-weight: 500 !important;
   font-size: 1.1rem !important;
@@ -26,7 +27,7 @@
   transition: all 0.3s ease !important;
 }
 
-.nav-link:hover {
+.navbar .nav-link:hover {
   color: #d4572a !important;
   background: rgba(212, 87, 42, 0.1) !important;
 }

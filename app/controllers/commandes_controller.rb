@@ -16,6 +16,9 @@ class CommandesController < ApplicationController
     @categories = Category.includes(:plats).joins(:plats).where(plats: { available: true }).distinct.order(:id)
     @cart_items = secure_cart
     @total = calculate_cart_total
+    
+    # Récupérer le plat_id pour le scroll automatique
+    @selected_plat_id = params[:plat_id]
   end
   
   def create
