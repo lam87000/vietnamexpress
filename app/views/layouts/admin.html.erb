@@ -13,6 +13,7 @@
     <%= stylesheet_link_tag "admin", "data-turbo-track": "reload" %>
     <%= yield :stylesheets %>
     <%= javascript_importmap_tags %>
+    <%= javascript_import_module_tag "admin_notifications" %>
   </head>
 
   <body class="admin-layout">
