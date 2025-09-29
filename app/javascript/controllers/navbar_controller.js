@@ -13,9 +13,9 @@ export default class extends Controller {
     if (this.hasNavbarTarget) {
       window.addEventListener('scroll', () => {
         if (window.scrollY > 50) {
-          this.navbarTarget.classList.add('navbar-scrolled')
+          this.navbarTarget.classList.add('scrolled')
         } else {
-          this.navbarTarget.classList.remove('navbar-scrolled')
+          this.navbarTarget.classList.remove('scrolled')
         }
       })
     }
