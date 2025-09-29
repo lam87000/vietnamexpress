@@ -1,45 +1,104 @@
-/* Navbar styles */
+/* Navbar moderne - Transparente vers colorée */
 .navbar {
-  background: rgba(26, 26, 26, 0.95) !important;
-  backdrop-filter: blur(10px);
-  padding: 1rem 0;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  background: transparent !important;
+  backdrop-filter: none;
+  padding: 1.5rem 0;
+  box-shadow: none;
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+/* Navbar au scroll - Version colorée */
+.navbar.scrolled {
+  background: rgba(254, 252, 247, 0.95) !important;
+  backdrop-filter: blur(15px);
+  padding: 0.75rem 0;
+  box-shadow: 0 4px 20px rgba(196, 30, 58, 0.1);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
 }
 
 .navbar-brand {
-  font-size: 1.5rem !important;
-  font-weight: 700 !important;
+  font-family: 'Playfair Display', serif !important;
+  font-size: 1.6rem !important;
+  font-weight: 600 !important;
   color: white !important;
-}
-
-.brand-text {
-  color: #d4572a !important;
-}
-
-/* Styles spécifiques pour la navbar principale */
-.navbar .nav-link {
-  color: white !important;
-  font-weight: 500 !important;
-  font-size: 1.1rem !important;
-  padding: 0.8rem 1rem !important;
-  margin: 0 0.2rem !important;
-  border-radius: 6px !important;
   transition: all 0.3s ease !important;
 }
 
+.navbar.scrolled .navbar-brand {
+  color: #1c1917 !important;
+  font-size: 1.4rem !important;
+}
+
+.brand-text {
+  background: linear-gradient(135deg, #d4af37 0%, #c41e3a 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.navbar.scrolled .brand-text {
+  background: linear-gradient(135deg, #c41e3a 0%, #d4af37 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Styles pour les liens navbar */
+.navbar .nav-link {
+  color: white !important;
+  font-weight: 500 !important;
+  font-size: 1rem !important;
+  padding: 0.75rem 1.25rem !important;
+  margin: 0 0.25rem !important;
+  border-radius: 25px !important;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.navbar .nav-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(196, 30, 58, 0.2) 0%, rgba(212, 175, 55, 0.2) 100%);
+  transition: left 0.3s;
+}
+
+.navbar .nav-link:hover::before {
+  left: 0;
+}
+
 .navbar .nav-link:hover {
-  color: #d4572a !important;
-  background: rgba(212, 87, 42, 0.1) !important;
+  color: #d4af37 !important;
+  transform: translateY(-2px);
 }
 
-/* Padding pour éviter que le contenu passe sous la navbar fixe */
+/* Liens navbar au scroll */
+.navbar.scrolled .nav-link {
+  color: #57534e !important;
+}
+
+.navbar.scrolled .nav-link:hover {
+  color: #c41e3a !important;
+}
+
+/* Padding ajusté pour navbar transparente */
 main {
-  padding-top: 100px !important;
+  padding-top: 0 !important;
 }
 
-/* Exception pour la page d'accueil */
-.home-page main {
-  padding-top: 0 !important;
+/* Overlay pour navbar transparente sur hero */
+.hero-modern {
+  position: relative;
+  z-index: 1;
 }
 
 .cart-indicator {
@@ -50,20 +109,32 @@ main {
   min-width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: rgba(212, 87, 42, 0.1);
-  color: #d4572a !important;
+  background: rgba(255, 255, 255, 0.1);
+  color: white !important;
+  transition: all 0.3s ease !important;
 }
 
 .cart-indicator:hover {
-  background: rgba(212, 87, 42, 0.2);
-  color: #d4572a !important;
+  background: rgba(212, 175, 55, 0.2);
+  color: #d4af37 !important;
+  transform: scale(1.05);
+}
+
+.navbar.scrolled .cart-indicator {
+  background: rgba(196, 30, 58, 0.1);
+  color: #c41e3a !important;
+}
+
+.navbar.scrolled .cart-indicator:hover {
+  background: rgba(196, 30, 58, 0.2);
+  color: #c41e3a !important;
 }
 
 .cart-count {
   position: absolute;
   top: -5px;
   right: -5px;
-  background: #d4572a;
+  background: linear-gradient(135deg, #c41e3a 0%, #d4af37 100%);
   color: white;
   border-radius: 50%;
   width: 20px;
@@ -74,6 +145,7 @@ main {
   font-size: 12px;
   font-weight: bold;
   animation: pulse 2s infinite;
+  box-shadow: 0 2px 8px rgba(196, 30, 58, 0.3);
 }
 
 @keyframes pulse {
@@ -82,9 +154,19 @@ main {
   100% { transform: scale(1); }
 }
 
+/* JavaScript trigger pour la classe scrolled */
+@media (prefers-reduced-motion: reduce) {
+  .navbar,
+  .navbar .nav-link,
+  .cart-indicator,
+  .admin-link {
+    transition: none !important;
+  }
+}
+
 /* Styles pour le bouton admin */
 .admin-link {
-  opacity: 0.6;
+  opacity: 0.7;
   transition: all 0.3s ease;
   display: inline-flex;
   align-items: center;
@@ -92,10 +174,21 @@ main {
   min-width: 40px;
   height: 40px;
   border-radius: 50%;
+  color: white !important;
 }
 
 .admin-link:hover {
   opacity: 1;
-  background: rgba(108, 117, 125, 0.1) !important;
-  color: #6c757d !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: white !important;
+  transform: scale(1.05);
+}
+
+.navbar.scrolled .admin-link {
+  color: #78716c !important;
+}
+
+.navbar.scrolled .admin-link:hover {
+  background: rgba(120, 113, 108, 0.1) !important;
+  color: #57534e !important;
 }
