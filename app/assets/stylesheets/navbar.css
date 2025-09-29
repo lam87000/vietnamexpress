@@ -1,15 +1,25 @@
-/* Navbar moderne - Transparente vers colorée */
+/* Navbar moderne - Par défaut colorée, transparente sur home */
 .navbar {
-  background: transparent !important;
-  backdrop-filter: none;
-  padding: 1.5rem 0;
-  box-shadow: none;
+  background: rgba(254, 252, 247, 0.95) !important;
+  backdrop-filter: blur(15px);
+  padding: 0.75rem 0;
+  box-shadow: 0 4px 20px rgba(196, 30, 58, 0.1);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
   transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 1000;
+}
+
+/* Version transparente uniquement sur la page d'accueil */
+.home-page .navbar {
+  background: transparent !important;
+  backdrop-filter: none;
+  padding: 1.5rem 0;
+  box-shadow: none;
+  border-bottom: none;
 }
 
 /* Navbar au scroll - Version colorée */
@@ -23,13 +33,19 @@
 
 .navbar-brand {
   font-family: 'Playfair Display', serif !important;
-  font-size: 1.6rem !important;
+  font-size: 1.4rem !important;
   font-weight: 600 !important;
-  color: white !important;
+  color: #1c1917 !important;
   transition: all 0.3s ease !important;
 }
 
-.navbar.scrolled .navbar-brand {
+/* Brand sur page d'accueil transparente */
+.home-page .navbar-brand {
+  color: white !important;
+  font-size: 1.6rem !important;
+}
+
+.home-page .navbar.scrolled .navbar-brand {
   color: #1c1917 !important;
   font-size: 1.4rem !important;
 }
@@ -50,7 +66,7 @@
 
 /* Styles pour les liens navbar */
 .navbar .nav-link {
-  color: white !important;
+  color: #57534e !important;
   font-weight: 500 !important;
   font-size: 1rem !important;
   padding: 0.75rem 1.25rem !important;
@@ -59,6 +75,11 @@
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
   position: relative !important;
   overflow: hidden !important;
+}
+
+/* Liens sur page d'accueil transparente */
+.home-page .navbar .nav-link {
+  color: white !important;
 }
 
 .navbar .nav-link::before {
@@ -77,21 +98,31 @@
 }
 
 .navbar .nav-link:hover {
-  color: #d4af37 !important;
+  color: #c41e3a !important;
   transform: translateY(-2px);
 }
 
-/* Liens navbar au scroll */
-.navbar.scrolled .nav-link {
+/* Hover sur page d'accueil transparente */
+.home-page .navbar .nav-link:hover {
+  color: #d4af37 !important;
+}
+
+/* Liens navbar au scroll (page d'accueil uniquement) */
+.home-page .navbar.scrolled .nav-link {
   color: #57534e !important;
 }
 
-.navbar.scrolled .nav-link:hover {
+.home-page .navbar.scrolled .nav-link:hover {
   color: #c41e3a !important;
 }
 
-/* Padding ajusté pour navbar transparente */
+/* Padding ajusté selon le type de page */
 main {
+  padding-top: 100px; /* Par défaut pour toutes les pages - espace suffisant */
+}
+
+/* Exception pour la page d'accueil avec hero transparent */
+.home-page main {
   padding-top: 0 !important;
 }
 

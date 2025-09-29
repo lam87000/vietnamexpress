@@ -1,7 +1,7 @@
 .menu-page {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 120px 20px 20px 20px; /* Top padding plus important pour éviter la navbar */
 }
 
 .menu-header {
