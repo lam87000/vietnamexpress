@@ -13,6 +13,9 @@ Rails.application.config.after_initialize do
     
     Rails.logger.info "🚀 Pré-chargement des images au démarrage..."
     
+    db_connection_errors = [ActiveRecord::ConnectionNotEstablished]
+    db_connection_errors << PG::ConnectionBad if defined?(PG::ConnectionBad)
+
     begin
       # Vérifier que la base de données est disponible
       ActiveRecord::Base.connection.execute("SELECT 1")
@@ -57,7 +60,7 @@ Rails.application.config.after_initialize do
         Rails.logger.info "📁 Images: #{image_paths.first(5).join(', ')}#{image_paths.count > 5 ? '...' : ''}"
       end
       
-    rescue ActiveRecord::ConnectionNotEstablished, PG::ConnectionBad => e
+    rescue *db_connection_errors => e
       Rails.logger.warn "⚠️  Base de données pas encore disponible: #{e.message.split("\n").first}"
     rescue ActiveRecord::StatementInvalid => e
       Rails.logger.warn "⚠️  Base de données pas encore prête: #{e.message}"

@@ -57,5 +57,7 @@ Rails.application.routes.draw do
     
     # Gestion des catégories
     resources :categories, except: [:show]
+
+    resources :closures, only: [:index, :create, :update, :destroy]
   end
 end

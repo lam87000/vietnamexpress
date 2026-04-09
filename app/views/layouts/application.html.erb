@@ -33,19 +33,31 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body data-controller="navbar">
+  <% body_classes = [] %>
+  <% body_classes << yield(:body_class) if content_for?(:body_class) %>
+  <body data-controller="navbar" class="<%= body_classes.join(' ') %>">
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" data-navbar-target="navbar">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top shadow-sm" data-navbar-target="navbar">
+      <% current_cart_count = respond_to?(:cart_count) ? cart_count : 0 %>
       <div class="container">
-        <%= link_to root_path, class: "navbar-brand" do %>
-          <i class="fas fa-utensils me-2"></i>
-          <span class="brand-text">Vietnam Express</span>
-        <% end %>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-          <span class="navbar-toggler-icon"></span>
-        </button>
+        <div class="d-flex align-items-center justify-content-between w-100 gap-2 navbar-top">
+          <%= link_to root_path, class: "navbar-brand mb-0" do %>
+            <i class="fas fa-utensils me-2"></i>
+            <span class="brand-text">Vietnam Express</span>
+          <% end %>
+          <div class="d-flex align-items-center gap-2 d-lg-none">
+            <a href="<%= new_commande_path %>#cart-section" class="btn btn-outline-primary btn-sm cart-mobile-indicator" data-cart-indicator>
+              <i class="fas fa-shopping-cart"></i>
+              <span class="badge text-bg-danger rounded-pill cart-count-badge <%= 'empty' if current_cart_count.zero? %>"><%= current_cart_count %></span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Afficher le menu">
+              <span class="navbar-toggler-icon"></span>
+              <span class="navbar-toggler-text">Menu</span>
+            </button>
+          </div>
+        </div>
         <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav ms-auto">
+          <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
             <li class="nav-item">
               <%= link_to "Accueil", root_path, class: "nav-link" %>
             </li>
@@ -55,27 +67,24 @@
             <li class="nav-item">
               <%= link_to "Commander", new_commande_path, class: "nav-link" %>
             </li>
-            <li class="nav-item">
-              <a href="/#contact" class="nav-link">Contact</a>
-            </li>
             
             <!-- Indicateur de panier -->
-            <li class="nav-item position-relative" id="cart-indicator" style="display: <%= (respond_to?(:cart_count) && cart_count > 0) ? 'block' : 'none' %>">
-              <a href="<%= new_commande_path %>#cart-section" class="nav-link cart-indicator">
+            <li class="nav-item d-none d-lg-block" data-cart-indicator>
+              <a href="<%= new_commande_path %>#cart-section" class="nav-link cart-indicator-link">
                 <i class="fas fa-shopping-cart"></i>
-                <span class="cart-count"><%= respond_to?(:cart_count) ? cart_count : 0 %></span>
+                <span class="badge text-bg-danger rounded-pill cart-count-badge <%= 'empty' if current_cart_count.zero? %>"><%= current_cart_count %></span>
               </a>
             </li>
             
             <li class="nav-item">
-              <a class="nav-link btn btn-primary ms-2 px-3" href="tel:0695728639">
+              <a class="btn btn-sm ms-lg-2 btn-phone" href="tel:0695728639">
                 <i class="fas fa-phone me-1"></i>Réserver
               </a>
             </li>
             
             <!-- Bouton Admin -->
             <li class="nav-item">
-              <%= link_to admin_login_path, class: "nav-link admin-link ms-2", title: "Administration" do %>
+              <%= link_to admin_login_path, class: "btn btn-outline-secondary btn-sm ms-lg-2", title: "Administration" do %>
                 <i class="fas fa-cog"></i>
               <% end %>
             </li>
@@ -88,6 +97,44 @@
     <main>
       <%= yield %>
     </main>
+
+    <% if upcoming_closures.any? %>
+      <div class="closure-modal" id="closure-modal">
+        <div class="closure-modal-overlay"></div>
+        <div class="closure-modal-content">
+          <button type="button" class="closure-modal-close" id="closure-modal-close">×</button>
+          <div class="closure-modal-body">
+            <div class="closure-modal-icon">📅</div>
+            <h3>Restaurant fermé pour congés</h3>
+            <p><strong><%= upcoming_closures.map(&:formatted_range).join(" • ") %></strong></p>
+            <% if upcoming_closures.first.reason.present? %>
+              <p><%= upcoming_closures.first.reason %></p>
+            <% end %>
+          </div>
+        </div>
+      </div>
+      <script>
+        (function() {
+          function initClosureModal(){
+            var modal = document.getElementById('closure-modal');
+            var closeBtn = document.getElementById('closure-modal-close');
+            if(!modal || !closeBtn) { return; }
+            var removeModal = function() {
+              modal.parentNode.removeChild(modal);
+            };
+            closeBtn.addEventListener('click', removeModal);
+            modal.querySelector('.closure-modal-overlay').addEventListener('click', removeModal);
+          }
+
+          if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            initClosureModal();
+          } else {
+            document.addEventListener('DOMContentLoaded', initClosureModal);
+          }
+          document.addEventListener('turbo:load', initClosureModal);
+        })();
+      </script>
+    <% end %>
 
     <!-- Footer -->
     <footer class="footer-section">

@@ -204,8 +204,10 @@ body {
 }
 
 .contact-link {
-  color: #6c757d;
+  color: #ffd700;
   text-decoration: none;
+  font-weight: 600;
+  text-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
 }
 
 .hours {

@@ -4,6 +4,7 @@
   <p class="admin-page-subtitle">Vue d'ensemble de votre restaurant - Auto-refresh activé</p>
 </div>
 
+<!-- Section Fermetures exceptionnelles -->
 <!-- NOUVELLE SECTION DE CONTRÔLE DES COMMANDES permet de mettre fin ou de relancer les commandes en lignes -->
 <div class="admin-control-panel">
   <h3>Contrôle des Commandes</h3>
@@ -19,7 +20,14 @@
       </div>
     </div>
   <% else %>
-    <p class="status-indicator status-off">❌ Les commandes sont actuellement <strong>SUSPENDUES</strong> jusqu'à <%= orders_disabled_until.strftime('%Hh%M') %>.</p>
+    <p class="status-indicator status-off">
+      ❌ Les commandes sont actuellement <strong>SUSPENDUES</strong>
+      <% if closure_active? %>
+        pour congés.
+      <% elsif orders_disabled_until.present? %>
+        jusqu'à <%= orders_disabled_until.strftime('%Hh%M') %>.
+      <% end %>
+    </p>
     <div class="actions">
       <%= button_to "Réactiver les commandes maintenant", admin_toggle_orders_settings_path, method: :post, class: "admin-btn admin-btn-success" %>
     </div>

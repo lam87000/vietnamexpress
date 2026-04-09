@@ -34,10 +34,11 @@ export default class extends Controller {
   }
   
   initializeSmoothScrolling() {
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    document.querySelectorAll('a.nav-link[href^="/#"]').forEach(anchor => {
       anchor.addEventListener('click', (e) => {
         e.preventDefault()
-        const target = document.querySelector(anchor.getAttribute('href'))
+        const targetId = anchor.getAttribute('href').substring(2) // Retire '/#'
+        const target = document.getElementById(targetId)
         if (target) {
           target.scrollIntoView({ behavior: 'smooth', block: 'start' })
         }

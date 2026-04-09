@@ -42,6 +42,10 @@
           <%= link_to admin_categories_path, class: "admin-nav-link #{'active' if controller_name == 'categories'}" do %>
             📁 Catégories
           <% end %>
+
+          <%= link_to admin_closures_path, class: "admin-nav-link #{'active' if controller_name == 'closures'}" do %>
+            📅 Fermetures
+          <% end %>
         </div>
         
         <div class="admin-nav-user">

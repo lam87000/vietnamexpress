@@ -1,16 +1,18 @@
-document.addEventListener('DOMContentLoaded', function() {
-  // Gestion des formulaires d'ajout au panier
+function initializeCartFeatures() {
   bindAddToCartForms();
-  
-  // Gestion des boutons de suppression
   bindRemoveButtons();
-});
+}
+
+document.addEventListener('DOMContentLoaded', initializeCartFeatures);
+document.addEventListener('turbo:load', initializeCartFeatures);
 
 function bindAddToCartForms() {
   const forms = document.querySelectorAll('.add-to-cart-form');
   
   forms.forEach(form => {
+    if (form.dataset.cartBound === 'true') { return; }
     form.addEventListener('submit', handleAddToCart);
+    form.dataset.cartBound = 'true';
   });
 }
 
@@ -18,6 +20,7 @@ function bindRemoveButtons() {
   const removeButtons = document.querySelectorAll('.btn-danger[href*="remove_from_cart"]');
   
   removeButtons.forEach(button => {
+    if (button.dataset.cartBound === 'true') { return; }
     button.addEventListener('click', function(e) {
       e.preventDefault();
       const platId = this.getAttribute('href').match(/plat_id=(\d+)/)?.[1];
@@ -25,6 +28,7 @@ function bindRemoveButtons() {
         removeFromCart(platId);
       }
     });
+    button.dataset.cartBound = 'true';
   });
 }
 
@@ -98,15 +102,13 @@ function removeFromCart(platId) {
 }
 
 function updateCartDisplay(data) {
-  // Mettre à jour le compteur dans la navbar
-  const cartCount = document.querySelector('.cart-count');
-  if (cartCount) {
-    cartCount.textContent = data.cart_count;
-    const cartIndicator = cartCount.closest('.nav-item');
-    if (cartIndicator) {
-      cartIndicator.style.display = data.cart_count > 0 ? 'block' : 'none';
-    }
-  }
+  // Mettre à jour les compteurs dans la navbar (desktop + mobile)
+  document.querySelectorAll('[data-cart-indicator]').forEach(indicator => {
+    const countEl = indicator.querySelector('.cart-count-badge');
+    if (!countEl) { return; }
+    countEl.textContent = data.cart_count;
+    countEl.classList.toggle('empty', !(data.cart_count > 0));
+  });
   
   // Remplacer le contenu du panier avec le HTML reçu
   const cartSection = document.querySelector('.cart-section');
@@ -122,14 +124,13 @@ function updateCartDisplay(data) {
 }
 
 function animateCartIcon() {
-  const cartIcon = document.querySelector('.fa-shopping-cart');
-  if (cartIcon) {
+  document.querySelectorAll('.fa-shopping-cart').forEach(cartIcon => {
     cartIcon.style.transform = 'scale(1.2)';
     cartIcon.style.transition = 'transform 0.2s ease';
     setTimeout(() => {
       cartIcon.style.transform = 'scale(1)';
     }, 200);
-  }
+  });
 }
 
 function showMessage(message, type) {

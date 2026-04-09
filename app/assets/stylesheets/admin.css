@@ -232,6 +232,45 @@
   font-size: 12px;
 }
 
+.closure-form {
+  margin-top: 15px;
+}
+
+.closure-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 15px;
+  align-items: end;
+}
+
+.closure-form-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.closure-list {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.closure-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.closure-reason {
+  color: #6c757d;
+  font-style: italic;
+  margin-left: 5px;
+}
+
 @media (max-width: 768px) {
   .admin-nav-container {
     flex-direction: column;

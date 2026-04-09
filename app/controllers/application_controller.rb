@@ -1,7 +1,8 @@
 class ApplicationController < ActionController::Base
   # On ajoute nos nouvelles méthodes à la liste.
   helper_method :calculate_cart_total, :secure_cart, :cart_count,
-                :restaurant_accepting_orders?, :orders_disabled_until
+                :restaurant_accepting_orders?, :orders_disabled_until,
+                :upcoming_closures, :closure_active?
   # --- LOGIQUE DU STATUT DES COMMANDES (MÉTHODES PUBLIQUES) ---
   def set_orders_disabled_until(timestamp)
     # On stocke dans le cache la date de fin du blocage.
@@ -13,7 +14,8 @@ class ApplicationController < ActionController::Base
   end
 
   def restaurant_accepting_orders?
-    # Les commandes sont acceptées si le timestamp de blocage est absent ou dans le passé.
+    return false if closure_active?
+
     timestamp = orders_disabled_until
     timestamp.nil? || timestamp < Time.current
   end
@@ -75,3 +77,10 @@ def cart_encryptor
   
   # Les helper_method sont déjà déclarés en haut du fichier
 end
+  def closure_active?
+    Closure.active_today.exists?
+  end
+
+  def upcoming_closures
+    @upcoming_closures ||= Closure.upcoming
+  end
