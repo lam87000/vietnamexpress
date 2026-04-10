@@ -36,13 +36,7 @@ class Admin::CommandesController < Admin::BaseController
   
   def change_status
     if @commande.update(statut: params[:status])
-      # Gérer les notifications par email
-      case params[:status]
-      when 'confirmee'
-        CommandeMailer.confirmation(@commande).deliver_now
-      when 'refusee'
-        CommandeMailer.rejection(@commande).deliver_now
-      end
+      send_status_email(params[:status])
       
       # Rediriger vers la bonne page avec un message adapté
       case params[:status]
@@ -77,6 +71,22 @@ class Admin::CommandesController < Admin::BaseController
   
   def set_commande
     @commande = Commande.find(params[:id])
+  end
+  
+  def send_status_email(new_status)
+    mailer = case new_status
+             when 'confirmee'
+               CommandeMailer.confirmation(@commande)
+             when 'refusee'
+               CommandeMailer.rejection(@commande)
+             end
+    
+    return unless mailer
+    
+    mailer.deliver_now
+  rescue StandardError => e
+    Rails.logger.error("Erreur lors de l'envoi de l'email pour la commande ##{@commande.id} : #{e.class} - #{e.message}")
+    flash[:alert] = "Commande ##{@commande.id} mise à jour, mais l'email client n'a pas pu être envoyé."
   end
   
   def commande_params

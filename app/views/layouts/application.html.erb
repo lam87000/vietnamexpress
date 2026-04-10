@@ -98,7 +98,7 @@
       <%= yield %>
     </main>
 
-    <% if upcoming_closures.any? %>
+    <% if active_closures.any? %>
       <div class="closure-modal" id="closure-modal">
         <div class="closure-modal-overlay"></div>
         <div class="closure-modal-content">
@@ -106,9 +106,9 @@
           <div class="closure-modal-body">
             <div class="closure-modal-icon">📅</div>
             <h3>Restaurant fermé pour congés</h3>
-            <p><strong><%= upcoming_closures.map(&:formatted_range).join(" • ") %></strong></p>
-            <% if upcoming_closures.first.reason.present? %>
-              <p><%= upcoming_closures.first.reason %></p>
+            <p><strong><%= active_closures.map(&:formatted_range).join(" • ") %></strong></p>
+            <% if active_closures.first&.reason.present? %>
+              <p><%= active_closures.first.reason %></p>
             <% end %>
           </div>
         </div>

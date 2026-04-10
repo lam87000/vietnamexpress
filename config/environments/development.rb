@@ -46,22 +46,31 @@ Rails.application.configure do
   config.active_storage.service = :local
 
   # Configuration ActionMailer pour le développement
-  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.raise_delivery_errors = false
   config.action_mailer.perform_caching = false
   config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
   
-  # Configuration pour l'envoi d'emails en développement
-  # Utilisez votre propre configuration SMTP
-  config.action_mailer.delivery_method = :smtp
-  config.action_mailer.smtp_settings = {
-    address: 'smtp.gmail.com',
-    port: 587,
-    domain: 'gmail.com',
-    user_name: ENV['GMAIL_USERNAME'],
-    password: ENV['GMAIL_PASSWORD'],
-    authentication: 'plain',
-    enable_starttls_auto: true
-  }
+  # En local on ne tente pas d'envoyer de vrais emails vers Gmail afin
+  # d'éviter les erreurs SSL bloquantes. Ils sont sauvegardés en fichiers
+  # consultables dans tmp/mails. Pour tester un vrai envoi, définir
+  # USE_SMTP_IN_DEVELOPMENT=true dans l'environnement.
+  if ENV['USE_SMTP_IN_DEVELOPMENT'] == 'true'
+    config.action_mailer.delivery_method = :smtp
+    config.action_mailer.smtp_settings = {
+      address: 'smtp.gmail.com',
+      port: 587,
+      domain: 'gmail.com',
+      user_name: ENV['GMAIL_USERNAME'],
+      password: ENV['GMAIL_PASSWORD'],
+      authentication: 'plain',
+      enable_starttls_auto: true
+    }
+  else
+    config.action_mailer.delivery_method = :file
+    config.action_mailer.file_settings = {
+      location: Rails.root.join('tmp/mails')
+    }
+  end
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
